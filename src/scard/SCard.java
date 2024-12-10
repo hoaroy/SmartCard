@@ -36,7 +36,7 @@ public class SCard extends Applet
 	private final static byte PIN_trylimit= (byte)0x03;
 	private final static byte PIN_maxsize= (byte)0x44;
 	private final static byte[] status = {(byte)0x00,(byte)0x01,(byte)0x02};
-    final private byte[] tempBuffer, pintoKey, sig_buffer, rsaPriKey, rsaPubKey;
+                    final private byte[] tempBuffer, pintoKey, sig_buffer, rsaPriKey, rsaPubKey;
 	private Signature rsaSig;
 	private short sigLen, rsaPriKeyLen, rsaPubKeyLen;
 	private RandomData ranData;
@@ -97,7 +97,7 @@ public class SCard extends Applet
 				imagelen2 = 0;
 				imagelen3 = 0;
 				imagelen4 = 0;
-			}
+			} //reset trang thai
 			if(buf[ISO7816.OFFSET_P1] == 0x02){
 				set_img(apdu, len);
 			}
@@ -454,8 +454,8 @@ public class SCard extends Applet
         priKeyLen += priKey.getModulus(rsaPriKey, priKeyLen);//N
         priKeyLen += priKey.getExponent(rsaPriKey, priKeyLen);//D
         JCSystem.beginTransaction();
-		rsaPubKeyLen = pubKeyLen;//do dai khóa RSA pub
-		rsaPriKeyLen = priKeyLen;// khóa RSA private
+		rsaPubKeyLen = pubKeyLen;//do dai khï¿½a RSA pub
+		rsaPriKeyLen = priKeyLen;// khï¿½a RSA private
 		JCSystem.commitTransaction();
 		JCSystem.requestObjectDeletion();
     }

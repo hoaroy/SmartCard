@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class BusForm extends javax.swing.JFrame {
+    private final static byte PIN_trylimit = (byte) 0x03; // So lan nhap pin m
+    private int pinTryCounter = PIN_trylimit; // bien luu tru so lan nhap con lai
     static info info;
     static theBus thebus;
     private Boolean input= false;
@@ -634,47 +636,62 @@ public class BusForm extends javax.swing.JFrame {
     }//GEN-LAST:event_bnt_naptienActionPerformed
 
     private void Btn_XemttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_XemttActionPerformed
-        if(input == false)
-        {
-            JOptionPane.showMessageDialog(null,"Thẻ không có dữ liệu.");
-        }
-        else
-        {
-            if(connected == true){
-            String pin = Arrays.toString(txt_pin.getPassword());
-            if(check_pin(pin) == 0) JOptionPane.showMessageDialog(null,"Mã PIN sai. Vui lòng nhập lại.");
-            else if (check_pin(pin) == 1){
-                JOptionPane.showMessageDialog(null, "Connect thẻ thành công.");
-                cardready =true;
-                getImage(info.getAvatar());
-                byte[] cmd = {(byte) 0xA0, (byte) 0x11, (byte) 0x00, (byte) 0x00};
-                byte[] data= {0};
-                setCommandAPDU(cmd,(byte)0, data, (byte)0);//hien thi apdu cmd len GUI
-                thebus.sendAPDUtoApplet(cmd);
-                byte[] dataRes = thebus.resAPDU.getData();
-                int le = thebus.resAPDU.getNr();
-                setResponseAPDU(dataRes, (byte)le);//hien thi du lieu phan hoi tu applet
-                String tach = new String(dataRes) ;
-                //System.out.print("a:"+tach);
-                String[] a = tach.split(":");
-                String st = a[0];
-                String ht = a[1];
-                String ns = a[2];
-                txt_sothe.setText(st);
-                txt_hoten.setText(ht);
-                txt_ngaysinh.setText(ns);;
-                byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
-                thebus.sendAPDUtoApplet(cmd1);
-                byte[] b = thebus.resAPDU.getData();
-                String sodu = "";
-                for (int i = 0; i < b.length; i++) {
-                    sodu += thebus.byteToHex(b[i]);
+        if (input == false) {
+            JOptionPane.showMessageDialog(null, "Thẻ không có dữ liệu.");
+        } else {
+            if (connected == true) {
+                String pin = Arrays.toString(txt_pin.getPassword());
+                switch (check_pin(pin)) {
+                    case 0:
+                        // Mã PIN sai
+                        pinTryCounter--; // Giam so lần nhập còn lại
+                        if (pinTryCounter > 0) {
+                            JOptionPane.showMessageDialog(null,
+                                    "Mã PIN sai. Bạn còn " + pinTryCounter + " lần nhập.");
+                        } else {
+                            JOptionPane.showMessageDialog(null,
+                                    "Bạn đã nhập sai quá số lần cho phép. Thẻ đã bị khóa!");
+                        }   break;
+                    case 1:
+                        // Mã PIN đúng
+                        JOptionPane.showMessageDialog(null, "Connect thẻ thành công.");
+                        cardready = true;
+                        pinTryCounter = PIN_trylimit; // Reset số lần nhập PIN khi thành công
+                        getImage(info.getAvatar());
+                        byte[] cmd = {(byte) 0xA0, (byte) 0x11, (byte) 0x00, (byte) 0x00};
+                        byte[] data = {0};
+                        setCommandAPDU(cmd, (byte) 0, data, (byte) 0); // Hiển thị APDU cmd lên GUI
+                        thebus.sendAPDUtoApplet(cmd);
+                        byte[] dataRes = thebus.resAPDU.getData();
+                        int le = thebus.resAPDU.getNr();
+                        setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
+                        String tach = new String(dataRes);
+                        String[] a = tach.split(":");
+                        String st = a[0];
+                        String ht = a[1];
+                        String ns = a[2];
+                        txt_sothe.setText(st);
+                        txt_hoten.setText(ht);
+                        txt_ngaysinh.setText(ns);
+                        byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
+                        thebus.sendAPDUtoApplet(cmd1);
+                        byte[] b = thebus.resAPDU.getData();
+                        String sodu = "";
+                        for (int i = 0; i < b.length; i++) {
+                            sodu += thebus.byteToHex(b[i]);
+                        }   int sd = Integer.valueOf(sodu, 16).intValue() * 1000;
+                        txt_sodu.setText("" + sd);
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null,
+                                "Bạn đã nhập sai quá số lần cho phép. Thẻ đã bị khóa!");
+                        break;
                 }
-                int sd = Integer.valueOf(sodu,16).intValue()*1000;
-                txt_sodu.setText(""+sd);
-            }else JOptionPane.showMessageDialog(null, "Bạn đã nhập sai quá số lần cho phép. Thẻ đã bị khóa!");
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+            } else {
+                JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+            }
         }
+    
     }//GEN-LAST:event_Btn_XemttActionPerformed
 
     private void txt_pinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_pinActionPerformed

@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 
 public class Formnhap extends javax.swing.JFrame {
     private info info;
-
+    
     public Formnhap() {
         info = new info();
         initComponents();
