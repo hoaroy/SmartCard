@@ -132,7 +132,6 @@ public class BusForm extends javax.swing.JFrame {
         jLabel79 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         btn_init = new javax.swing.JButton();
-        btn_sendata = new javax.swing.JButton();
         btn_clear = new javax.swing.JButton();
         Button_Unblock = new javax.swing.JButton();
         Button_connect = new javax.swing.JButton();
@@ -406,15 +405,6 @@ public class BusForm extends javax.swing.JFrame {
         });
         jPanel5.add(btn_init, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 160, 30));
 
-        btn_sendata.setForeground(new java.awt.Color(15, 14, 14));
-        btn_sendata.setText("Gửi đến Applet");
-        btn_sendata.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_sendataActionPerformed(evt);
-            }
-        });
-        jPanel5.add(btn_sendata, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 160, 30));
-
         btn_clear.setForeground(new java.awt.Color(15, 14, 14));
         btn_clear.setText("Xóa Thẻ");
         btn_clear.addActionListener(new java.awt.event.ActionListener() {
@@ -553,7 +543,7 @@ public class BusForm extends javax.swing.JFrame {
     private void btn_initActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_initActionPerformed
         if(connected == true){
             if (input == false) {
-                Formnhap initform = new Formnhap();
+                Formnhap initform = new Formnhap(this);
                 initform.setVisible(true);
                 initform.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             }
@@ -582,51 +572,6 @@ public class BusForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Thẻ đã được mở khóa.");
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_Button_UnblockActionPerformed
-
-    private void btn_sendataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sendataActionPerformed
-        if(connected == true){
-        if (input == false) {
-            setImage(info.getAvatar());
-            getImage(info.getAvatar());
-            //chuyen du lieu xuong applet
-            String sothe = info.getSothe();
-            String hoten = info.getHoten();
-            String ngaysinh = info.getNgaysinh();
-            String pin = info.getPin();
-            String arraysend = sothe.concat(".").concat(hoten).concat(".").concat(ngaysinh).concat(".").concat(pin);
-            System.out.println("send:"+arraysend);
-            int lc = arraysend.length();
-            byte datalen = (byte) lc; //do dai du lieu gui vao applet
-            byte[] cmd = {(byte) 0xA0, (byte) 0x10, (byte) 0x00, (byte) 0x00};
-            byte[] data = arraysend.getBytes();
-            setCommandAPDU(cmd, (byte)lc, data, (byte)0);
-            thebus.sendAPDUtoApplet(cmd, data);
-            byte[] dataRes = thebus.resAPDU.getData();
-            int le = thebus.resAPDU.getNr();
-            setResponseAPDU(dataRes, (byte)le);//hien thi du lieu phan hoi tu applet
-            String tach = new String(dataRes) ;
-            System.out.print("a:"+tach);
-            String[] a = tach.split(":");
-            String st = a[0];
-            String ht = a[1];
-            String ns = a[2];
-//            txt_sothe.setText(st);
-//            txt_hoten.setText(ht);
-//            txt_ngaysinh.setText(ns);
-            byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
-            thebus.sendAPDUtoApplet(cmd1);
-            byte[] b = thebus.resAPDU.getData();
-            String sodu = "";
-            for (int i = 0; i < b.length; i++) {
-                sodu += thebus.byteToHex(b[i]);
-            }
-//            txt_sodu.setText(""+Integer.valueOf(sodu,16).intValue()*1000);
-            input = true;
-        } else {
-            JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");
-        }
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
-    }//GEN-LAST:event_btn_sendataActionPerformed
 
     private void bnt_naptienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bnt_naptienActionPerformed
         if(connected ==true && cardready == true){
@@ -782,6 +727,53 @@ public class BusForm extends javax.swing.JFrame {
             
         });
     }
+    
+    
+    public  void sendData() {
+    if (connected == true ) {
+        if (!input) {
+            setImage(info.getAvatar());
+            getImage(info.getAvatar());
+            // Chuyển dữ liệu xuống applet
+            String sothe = info.getSothe();
+            String hoten = info.getHoten();
+            String ngaysinh = info.getNgaysinh();
+            String pin = info.getPin();
+            String arraysend = sothe.concat(".").concat(hoten).concat(".").concat(ngaysinh).concat(".").concat(pin);
+            System.out.println("send:" + arraysend);
+            int lc = arraysend.length();
+            byte datalen = (byte) lc; // Độ dài dữ liệu gửi vào applet
+            byte[] cmd = {(byte) 0xA0, (byte) 0x10, (byte) 0x00, (byte) 0x00};
+            byte[] data = arraysend.getBytes();
+            setCommandAPDU(cmd, (byte) lc, data, (byte) 0);
+            thebus.sendAPDUtoApplet(cmd, data);
+            byte[] dataRes = thebus.resAPDU.getData();
+            int le = thebus.resAPDU.getNr();
+            setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
+            String tach = new String(dataRes);
+            System.out.print("a:" + tach);
+            String[] a = tach.split(":");
+            String st = a[0];
+            String ht = a[1];
+            String ns = a[2];
+
+            byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
+            thebus.sendAPDUtoApplet(cmd1);
+            byte[] b = thebus.resAPDU.getData();
+            String sodu = "";
+            for (int i = 0; i < b.length; i++) {
+                sodu += thebus.byteToHex(b[i]);
+            }
+
+            input = true;
+        } else {
+            JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");
+        }
+    } else {
+        JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+    }
+}
+
     private void setImage(byte [] img){
         if(img == null) return;
         byte[] cmd = {(byte) 0xA0, (byte) 0x12, (byte) 0x01, (byte) 0x00};
@@ -871,7 +863,6 @@ public class BusForm extends javax.swing.JFrame {
     private javax.swing.JButton btn_changePIN;
     private javax.swing.JButton btn_clear;
     private javax.swing.JButton btn_init;
-    private javax.swing.JButton btn_sendata;
     private javax.swing.JButton btn_thanhtoan;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JInternalFrame jInternalFrame1;
