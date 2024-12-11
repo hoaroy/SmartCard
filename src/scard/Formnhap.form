@@ -153,9 +153,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_hoten">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_hotenActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="txt_ns">
     </Component>
@@ -167,7 +164,7 @@
         <Property name="text" type="java.lang.String" value="L&#x1b0;u"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_okActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_okActionPerformed,btn_senddataActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="sd">
