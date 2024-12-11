@@ -571,6 +571,7 @@ public class BusForm extends javax.swing.JFrame {
 
     private void Button_UnblockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_UnblockActionPerformed
         if(connected==true){
+            pinTryCounter = PIN_trylimit; // Reset số lần  khi mo khoa thành công
             byte[] cmd = {(byte) 0xA0, (byte) 0x20, (byte) 0x00, (byte) 0x00};
             byte[] data= {0};
             setCommandAPDU(cmd,(byte)0, data, (byte)0);//hien thi apdu cmd len GUI
