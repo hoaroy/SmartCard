@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class BusForm extends javax.swing.JFrame {
+    private final static byte PIN_trylimit = (byte) 0x03; // So lan nhap pin m
+    private int pinTryCounter = PIN_trylimit; // bien luu tru so lan nhap con lai
     static info info;
     static theBus thebus;
     private Boolean input= false;
@@ -57,7 +59,7 @@ public class BusForm extends javax.swing.JFrame {
         txt_cmd.setText(temp);
         txt_le.setText(thebus.byteToHex(le));
     }
-    //hien thi apdu phan hoi len GUI
+    //hien thi apdu phan hoi len
     public void setResponseAPDU(byte[] datares,short le) {
         int status1 = thebus.resAPDU.getSW1();
         int status2 = thebus.resAPDU.getSW2();
@@ -457,7 +459,7 @@ public class BusForm extends javax.swing.JFrame {
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
@@ -466,18 +468,17 @@ public class BusForm extends javax.swing.JFrame {
                 .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel_info, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel_info, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
-    //Ngat ket noi
+
     private void Button_DisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_DisconnectActionPerformed
         if(thebus.disconnectApplet() == true){
         txt_sothe.setText("");
@@ -505,8 +506,7 @@ public class BusForm extends javax.swing.JFrame {
         }
         else JOptionPane.showMessageDialog(this, "Ngắt kết nối không thành công.");
     }//GEN-LAST:event_Button_DisconnectActionPerformed
-    
-    //Ket noi
+
     private void Button_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_connectActionPerformed
         if(thebus.connectApplet() == true){//thiet lap ket noi
         byte[] cmd = {(byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00};// select
@@ -515,9 +515,9 @@ public class BusForm extends javax.swing.JFrame {
         byte lc = 6;
         byte le_expect = 2;
         setCommandAPDU(cmd, lc, data, le_expect);//hien thi apdu cmd
-        thebus.sendAPDUtoApplet(cmd, data); //gui lenh APDU den applet
-        byte[] dataRes = thebus.resAPDU.getData(); //lay du lieu phan hoi
-        int le = thebus.resAPDU.getNr(); 
+        thebus.sendAPDUtoApplet(cmd, data);
+        byte[] dataRes = thebus.resAPDU.getData();
+        int le = thebus.resAPDU.getNr();
         setResponseAPDU(dataRes, (short)le);//hien thi du lieu phan hoi tu applet
         Button_connect.setText("Đã kết nối");
         Button_connect.setBackground(Color.green);
@@ -526,8 +526,7 @@ public class BusForm extends javax.swing.JFrame {
         connected = true;
         }else JOptionPane.showMessageDialog(this, "Kết nối không thành công. Hãy thử lại.");
     }//GEN-LAST:event_Button_connectActionPerformed
-    
-    //Xoa the
+
     private void btn_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clearActionPerformed
         if(connected ==true){
             if(input == false){ JOptionPane.showMessageDialog(null, "Thẻ chưa có dữ liệu.");
@@ -550,8 +549,7 @@ public class BusForm extends javax.swing.JFrame {
             
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_clearActionPerformed
-    
-    //Khoi tao the
+
     private void btn_initActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_initActionPerformed
         if(connected == true){
             if (input == false) {
@@ -570,10 +568,10 @@ public class BusForm extends javax.swing.JFrame {
     private void txt_p2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_p2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_p2ActionPerformed
-    
-    // Mo khoa the
+
     private void Button_UnblockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_UnblockActionPerformed
         if(connected==true){
+            pinTryCounter = PIN_trylimit; // Reset số lần  khi mo khoa thành công
             byte[] cmd = {(byte) 0xA0, (byte) 0x20, (byte) 0x00, (byte) 0x00};
             byte[] data= {0};
             setCommandAPDU(cmd,(byte)0, data, (byte)0);//hien thi apdu cmd len GUI
@@ -584,13 +582,12 @@ public class BusForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Thẻ đã được mở khóa.");
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_Button_UnblockActionPerformed
-    
-    // Gui den Applet
+
     private void btn_sendataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sendataActionPerformed
         if(connected == true){
         if (input == false) {
             setImage(info.getAvatar());
-            getImage(info.getAvatar()); //lay du lieu anh
+            getImage(info.getAvatar());
             //chuyen du lieu xuong applet
             String sothe = info.getSothe();
             String hoten = info.getHoten();
@@ -630,8 +627,7 @@ public class BusForm extends javax.swing.JFrame {
         }
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_sendataActionPerformed
-    
-    //Nap tien
+
     private void bnt_naptienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bnt_naptienActionPerformed
         if(connected ==true && cardready == true){
                 Naptien naptien = new Naptien();
@@ -639,54 +635,70 @@ public class BusForm extends javax.swing.JFrame {
                 naptien.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_bnt_naptienActionPerformed
-    
-    //Xem thong tin
+
     private void Btn_XemttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_XemttActionPerformed
-        if(input == false){
-            JOptionPane.showMessageDialog(null,"Thẻ không có dữ liệu.");
-        }else{
-            if(connected == true){
-            String pin = Arrays.toString(txt_pin.getPassword());
-            if(check_pin(pin) == 0) JOptionPane.showMessageDialog(null,"Mã PIN sai. Vui lòng nhập lại.");
-            else if (check_pin(pin) == 1){
-                JOptionPane.showMessageDialog(null, "Connect thẻ thành công.");
-                cardready =true;
-                getImage(info.getAvatar());
-                byte[] cmd = {(byte) 0xA0, (byte) 0x11, (byte) 0x00, (byte) 0x00};
-                byte[] data= {0};
-                setCommandAPDU(cmd,(byte)0, data, (byte)0);//hien thi apdu cmd len GUI
-                thebus.sendAPDUtoApplet(cmd);
-                byte[] dataRes = thebus.resAPDU.getData();
-                int le = thebus.resAPDU.getNr();
-                setResponseAPDU(dataRes, (byte)le);//hien thi du lieu phan hoi tu applet
-                String tach = new String(dataRes) ;
-                //System.out.print("a:"+tach);
-                String[] a = tach.split(":");
-                String st = a[0];
-                String ht = a[1];
-                String ns = a[2];
-                txt_sothe.setText(st);
-                txt_hoten.setText(ht);
-                txt_ngaysinh.setText(ns);;
-                byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
-                thebus.sendAPDUtoApplet(cmd1);
-                byte[] b = thebus.resAPDU.getData();
-                String sodu = "";
-                for (int i = 0; i < b.length; i++) {
-                    sodu += thebus.byteToHex(b[i]);
+        if (input == false) {
+            JOptionPane.showMessageDialog(null, "Thẻ không có dữ liệu.");
+        } else {
+            if (connected == true) {
+                String pin = Arrays.toString(txt_pin.getPassword());
+                switch (check_pin(pin)) {
+                    case 0:
+                        // Mã PIN sai
+                        pinTryCounter--; // Giam so lần nhập còn lại
+                        if (pinTryCounter > 0) {
+                            JOptionPane.showMessageDialog(null,
+                                    "Mã PIN sai. Bạn còn " + pinTryCounter + " lần nhập.");
+                        } else {
+                            JOptionPane.showMessageDialog(null,
+                                    "Bạn đã nhập sai quá số lần cho phép. Thẻ đã bị khóa!");
+                        }   break;
+                    case 1:
+                        // Mã PIN đúng
+                        JOptionPane.showMessageDialog(null, "Connect thẻ thành công.");
+                        cardready = true;
+                        pinTryCounter = PIN_trylimit; // Reset số lần nhập PIN khi thành công
+                        getImage(info.getAvatar());
+                        byte[] cmd = {(byte) 0xA0, (byte) 0x11, (byte) 0x00, (byte) 0x00};
+                        byte[] data = {0};
+                        setCommandAPDU(cmd, (byte) 0, data, (byte) 0); // Hiển thị APDU cmd lên GUI
+                        thebus.sendAPDUtoApplet(cmd);
+                        byte[] dataRes = thebus.resAPDU.getData();
+                        int le = thebus.resAPDU.getNr();
+                        setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
+                        String tach = new String(dataRes);
+                        String[] a = tach.split(":");
+                        String st = a[0];
+                        String ht = a[1];
+                        String ns = a[2];
+                        txt_sothe.setText(st);
+                        txt_hoten.setText(ht);
+                        txt_ngaysinh.setText(ns);
+                        byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
+                        thebus.sendAPDUtoApplet(cmd1);
+                        byte[] b = thebus.resAPDU.getData();
+                        String sodu = "";
+                        for (int i = 0; i < b.length; i++) {
+                            sodu += thebus.byteToHex(b[i]);
+                        }   int sd = Integer.valueOf(sodu, 16).intValue() * 1000;
+                        txt_sodu.setText("" + sd);
+                        break;
+                    default:
+                        JOptionPane.showMessageDialog(null,
+                                "Bạn đã nhập sai quá số lần cho phép. Thẻ đã bị khóa!");
+                        break;
                 }
-                int sd = Integer.valueOf(sodu,16).intValue()*1000;
-                txt_sodu.setText(""+sd);
-            }else JOptionPane.showMessageDialog(null, "Bạn đã nhập sai quá số lần cho phép. Thẻ đã bị khóa!");
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+            } else {
+                JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+            }
         }
+    
     }//GEN-LAST:event_Btn_XemttActionPerformed
 
     private void txt_pinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_pinActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_pinActionPerformed
-    
-    //Doi thong tin
+
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
        if(connected == true && cardready == true){
                 updateInfoForm updateinfo= new updateInfoForm(txt_sothe.getText(), txt_hoten.getText(),txt_ngaysinh.getText());
@@ -694,8 +706,7 @@ public class BusForm extends javax.swing.JFrame {
                 updateinfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_capnhatActionPerformed
-    
-    //Thay doi ma pin
+
     private void btn_changePINActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_changePINActionPerformed
          if(connected == true && cardready == true){
                 updatePIN updatepin= new updatePIN();
@@ -703,8 +714,7 @@ public class BusForm extends javax.swing.JFrame {
                 updatepin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_changePINActionPerformed
-    
-    //Thay anh
+
     private void Btn_thayanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_thayanhActionPerformed
         if(connected == true && cardready == true){
         JFileChooser fc = new JFileChooser();
@@ -727,8 +737,7 @@ public class BusForm extends javax.swing.JFrame {
         }
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ.");
     }//GEN-LAST:event_Btn_thayanhActionPerformed
-    
-    //Thanh toan
+
     private void btn_thanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_thanhtoanActionPerformed
         if(connected == true && cardready == true){
                 thanhtoan pay= new thanhtoan();
