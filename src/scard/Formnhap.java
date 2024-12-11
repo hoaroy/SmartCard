@@ -20,7 +20,8 @@ import javax.swing.JFrame;
 
 public class Formnhap extends javax.swing.JFrame {
     private info info;
-
+    private static int counter = 100000; // Bộ đếm bắt đầu từ 100000
+    
     public Formnhap() {
         info = new info();
         initComponents();
@@ -195,32 +196,38 @@ public class Formnhap extends javax.swing.JFrame {
         return (int) ((Math.random() * (max - min)) + min);
     }
     private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
-        String pin = Arrays.toString(txt_pin.getPassword());
-        String checkpin = Arrays.toString(txt_checkpin.getPassword());
-        if( txt_hoten.getText().equals("") || txt_ns.getText().equals("")|| txt_pin.getPassword().equals("")|| txt_checkpin.getPassword().equals("")){
-            JOptionPane.showMessageDialog(this, "Tất cả các trường không được để trống!");
-        }else if (pin.length() <18 || pin.length() >44){
-            JOptionPane.showMessageDialog(this, "độ dài PIN từ 6-32 ký tự.");
-        }else if((pin.equals(checkpin)) != true) {
-            JOptionPane.showMessageDialog(this, "Xác nhận mã pin sai");
-        } else {
-        int i = getRandomNumber(100000,999999); 
-        String sothe = Integer.toString(i);
+String pin = Arrays.toString(txt_pin.getPassword());
+    String checkpin = Arrays.toString(txt_checkpin.getPassword());
+    if( txt_hoten.getText().equals("") || txt_ns.getText().equals("")|| txt_pin.getPassword().equals("")|| txt_checkpin.getPassword().equals("")){
+        JOptionPane.showMessageDialog(this, "Tất cả các trường không được để trống!");
+    } else if (pin.length() < 18 || pin.length() > 44) {
+        JOptionPane.showMessageDialog(this, "độ dài PIN từ 6-32 ký tự.");
+    } else if (!pin.equals(checkpin)) {
+        JOptionPane.showMessageDialog(this, "Xác nhận mã pin sai");
+    } else {
+        // Sinh mã số thẻ theo logic "CT" + số thứ tự
+        String sothe = "CT" + counter;
+        counter++; // Tăng bộ đếm
+        
         String hoten = txt_hoten.getText();
         String ngaysinh = txt_ns.getText();
+        
+        // Gán thông tin vào đối tượng info
         info.setSothe(sothe);
         info.setHoten(hoten);
         info.setNgaysinh(ngaysinh);
         info.setPin(pin);
         BusForm.info = this.info;
+        
         JOptionPane.showMessageDialog(null, "Khởi tạo nội dung thẻ thành công.");
         
+        // Xóa nội dung các trường
         txt_hoten.setText("");
         txt_ns.setText("");
         txt_pin.setText("");
         txt_checkpin.setText("");
         setVisible(false);
-        }
+    }
     }//GEN-LAST:event_btn_okActionPerformed
 
     private void Button_getavaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_getavaActionPerformed
