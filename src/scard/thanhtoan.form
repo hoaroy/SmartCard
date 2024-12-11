@@ -32,7 +32,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="138" max="-2" attributes="0"/>
-                      <Component id="btn_NapTien" min="-2" pref="98" max="-2" attributes="0"/>
+                      <Component id="btn_ThanhToan" min="-2" pref="98" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
@@ -102,7 +102,7 @@
                   <Component id="txt_checkOTP" alignment="0" min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-              <Component id="btn_NapTien" min="-2" pref="31" max="-2" attributes="0"/>
+              <Component id="btn_ThanhToan" min="-2" pref="31" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -114,7 +114,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_sotienActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btn_NapTien">
+    <Component class="javax.swing.JButton" name="btn_ThanhToan">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="cc" green="cc" red="cc" type="rgb"/>
@@ -122,7 +122,7 @@
         <Property name="text" type="java.lang.String" value="Thanh to&#xe1;n"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_NapTienActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_ThanhToanActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JPasswordField" name="txt_pin">

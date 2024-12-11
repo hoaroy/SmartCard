@@ -4,8 +4,8 @@ import javacard.security.*;
 import javacardx.crypto.*;
 public class test extends Applet
 {
-	private static final byte INS_SIGN = (byte)0x00;
-	private static final byte INS_VERIFY = (byte)0x01;
+	private static final byte INS_SIGN = (byte)0x00; // Thuc hien ky
+	private static final byte INS_VERIFY = (byte)0x01; // Xac minh ky
 
 	private RSAPrivateKey rsaPrivKey;
 	private RSAPublicKey rsaPubKey;
