@@ -227,14 +227,15 @@ public class Formnhap extends javax.swing.JFrame {
         JFileChooser fc = new JFileChooser();
         int returnValue = fc.showOpenDialog(this);
         if(returnValue == JFileChooser.APPROVE_OPTION){
-            File file = fc.getSelectedFile();
-            String path = file.getAbsolutePath();
+            File file = fc.getSelectedFile(); //lay tep
+            String path = file.getAbsolutePath(); //lay duong dan cua tep
             BufferedImage bimage;
             try{
-                bimage = ImageIO.read(file);
+                bimage = ImageIO.read(file); //doc tep
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(bimage, "jpg", baos);
-                byte[] img = baos.toByteArray();
+                byte[] img = baos.toByteArray(); // luu vao info
+                //thay doi kich thuoc anh
                 ImageIcon icon= new ImageIcon(bimage.getScaledInstance(anh.getWidth(), anh.getHeight(), Image.SCALE_SMOOTH));
                 icon.getImage();
                 anh.setIcon(icon);

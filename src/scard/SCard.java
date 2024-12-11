@@ -6,9 +6,9 @@ import javacardx.crypto.*;
 
 public class SCard extends Applet
 {
-	private static byte[] pintemp, sothe, hoten, ngaysinh, quequan;
+	private static byte[] pintemp, sothe, hoten, ngaysinh;
 	private OwnerPIN pin;
-	private static short sodu, pinlen, sothelen, hotenlen, ngaysinhlen, quequanlen, count;
+	private static short sodu, pinlen, sothelen, hotenlen, ngaysinhlen, count;
 	private final static byte CLA = (byte) 0xA0;
 	//image
 	private byte[] image1,image2,image3,image4;
@@ -51,7 +51,6 @@ public class SCard extends Applet
 		sothe = new byte[32];
 		hoten = new byte[64];
 		ngaysinh = new byte[16];
-		quequan = new byte[64];
 		pintoKey = new byte[16];
 		sodu = 0;
 		// image 
@@ -103,7 +102,7 @@ public class SCard extends Applet
 			}
 			break;
 		case INS_GETIMG: //Tra hinh anh du lieu tu the
-			if(buf[ISO7816.OFFSET_P1] == 0x01){
+			if(buf[ISO7816.OFFSET_P1] == 0x01){ //Chuan bi du lieu
 				lenback1= imagelen1;
 				lenback2= imagelen2;
 				lenback3= imagelen3;
@@ -122,7 +121,7 @@ public class SCard extends Applet
 					lenback4=1;
 				}
 			}
-			if(buf[ISO7816.OFFSET_P1] ==0x02){
+			if(buf[ISO7816.OFFSET_P1] ==0x02){ // Gui du lieu
 				get_img(apdu);
 			}
 			break;
@@ -187,7 +186,6 @@ public class SCard extends Applet
 		Util.arrayCopy(tempBuffer, (short)(t1+1), hoten, (short)0,hotenlen);
 		Util.arrayCopy(tempBuffer, (short)(t2+1), ngaysinh, (short)0,ngaysinhlen);
 		Util.arrayCopy(tempBuffer, (short)(t3+1), pintemp, (short)0,pinlen);
-		//pin.update(pintemp, (short)0, (byte)pinlen);
 		//tao cap khoa
 		genKeypair(apdu);
 		setAesKey(apdu,pintemp, pinlen);
@@ -217,6 +215,8 @@ public class SCard extends Applet
 		Util.arrayCopy(tempBuffer, (short)0, buffer, (short)0, (short)(totallen));
 		apdu.setOutgoingAndSend((short)0,(short)(totallen));
 	}
+	
+	//Lay thong tin ca nhan
     private void get_info(APDU apdu){
 	    byte[] buffer = apdu.getBuffer();
         short len= (short)(sothelen+ hotenlen+ngaysinhlen+2);
@@ -234,7 +234,9 @@ public class SCard extends Applet
 		//Util.setShort(tempBuffer, (short)(sothelen+hotenlen+ngaysinhlen+loaithelen+thoihanlen+5),sodu);
 		Util.arrayCopy(tempBuffer, (short)0, buffer, (short) 0, len);
         apdu.setOutgoingAndSend((short)0, len);
-}
+	}
+
+	// Xoa du lieu the
 	private void clear_card(APDU apdu) {
 		sodu = (short)0;
 		pinlen = (short)0;
@@ -249,7 +251,13 @@ public class SCard extends Applet
         Util.arrayFillNonAtomic(rsaPriKey, (short) 0, (short)(2*128), (byte) 0);
         Util.arrayFillNonAtomic(rsaPubKey, (short) 0, (short)(2*128), (byte) 0);
         Util.arrayFillNonAtomic(sig_buffer, (short) 0, (short)(128), (byte) 0);
+        Util.arrayFillNonAtomic(image1, (short) 0, (short) image1.length, (byte) 0);
+		Util.arrayFillNonAtomic(image2, (short) 0, (short) image2.length, (byte) 0);
+		Util.arrayFillNonAtomic(image3, (short) 0, (short) image3.length, (byte) 0);
+		Util.arrayFillNonAtomic(image4, (short) 0, (short) image4.length, (byte) 0);
     }
+    
+    //Ghi du lieu hinh anh len the
     private void set_img(APDU apdu, short len){
     	byte[] buf = apdu.getBuffer();
 		short offData = apdu.getOffsetCdata();
@@ -271,11 +279,13 @@ public class SCard extends Applet
            	 }
            }
 	    }
-	    
+	
+	// Tra hinh anh du lieu tu the    
     private void get_img(APDU apdu){
     	byte[] buf = apdu.getBuffer();
 		short datalen = 255;
-        if(lenback3==0){
+		// Xu ly tuan tu vung hinh anh
+        if(lenback3==0){ 
         	if(lenback4 <255){
 	        	datalen = lenback4;
         	}
@@ -321,7 +331,8 @@ public class SCard extends Applet
 				}
         	}
 	    }
-	    
+	
+	// Kiem tra ma PIN
     private void check_pin(APDU apdu, short len) {
         byte[] buffer = apdu.getBuffer();
         apdu.setOutgoing();
@@ -330,15 +341,17 @@ public class SCard extends Applet
         encrypt_AesCipher(apdu,tempBuffer, (short)len);
         if (pin.getTriesRemaining() != 0){
         	if(pin.check(tempBuffer,(short)0, (byte)len) == true) {
-				apdu.sendBytesLong(status,(short) 1, (short) 1);//gui 1
-				}else apdu.sendBytesLong(status,(short)0,(short)1); // gui 0
+				apdu.sendBytesLong(status,(short) 1, (short) 1);//gui 1 (PIN dung)
+				}else apdu.sendBytesLong(status,(short)0,(short)1); // gui 0 (PIN sai)
         }else apdu.sendBytesLong(status, (short)2, (short) 1);//gui 2
     }
     
+    // Mo khoa the
     private  void unblock_card(APDU apdu){
         pin.resetAndUnblock();
     }
     
+    // Thiet lap khoa AES
     private void  setAesKey(APDU apdu, byte[] in, short len){
     	byte[] buffer = apdu.getBuffer();
 	    short md5len = md5.doFinal(in, (short)0, (short)len, buffer, (short)0);
@@ -346,18 +359,22 @@ public class SCard extends Applet
 	    Util.arrayCopy(buffer , (short)0, pintoKey, (short)0, (short)md5len);
 	    JCSystem.commitTransaction();
 	    JCSystem.requestObjectDeletion();
-	    }
-	    
+	}
+	
+	// Ma hoa du lieu    
 	private void encrypt_AesCipher(APDU apdu, byte[] in, short inlen) {
         try {
         	byte[] buffer = apdu.getBuffer();
-            aesKey.setKey(pintoKey, (short)0);//set khoa tu PIN
+            aesKey.setKey(pintoKey, (short)0);//set khoa tu PIN bang pintoKey
             byte mod = Cipher.MODE_ENCRYPT;
-            if(inlen <= 0){ ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
-            }else if(inlen % 16 == 0){
+            if(inlen <= 0){ 
+            	ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
+            }
+            else if(inlen % 16 == 0){
 				aescipher.init(aesKey, mod);
 				aescipher.doFinal(in, (short) 0, inlen, in, (short) 0);
-			}else if (inlen <16){
+			}
+			else if (inlen <16){
 				byte[] a= new byte[(short)(16-inlen)];
 				for(short i=0; i<(short)(16-inlen);i++){
 					a[i] = (byte)(i+1); 
@@ -366,7 +383,8 @@ public class SCard extends Applet
 				aescipher.update(in,(short)0,(short)(inlen),buffer,(short)0);
 				aescipher.doFinal(a, (short) 0, (short)(16-inlen), buffer, (short)0);
 				Util.arrayCopy(buffer, (short)0, in, (short)0, (short)16);
-			}else{
+			}
+			else{
 				byte[] b= new byte[16];
 				count=0;
 				for(short i=0; i<inlen; i++){
@@ -398,6 +416,7 @@ public class SCard extends Applet
         }
     }
     
+    // Giai ma du lieu
     private void decrypt_AesCipher(APDU apdu, byte[] in, short inlen,byte[] out, short offset){
     	byte[] buffer = apdu.getBuffer();
     	byte mod = Cipher.MODE_DECRYPT;
@@ -424,11 +443,12 @@ public class SCard extends Applet
 		JCSystem.requestObjectDeletion();	
     }
     
+    // Xac dinh, dieu chinh do dai dau ra 
     private short setoutlen(short inlen){
 	    if(inlen <= 0){ ISOException.throwIt(ISO7816.SW_WRONG_LENGTH);
 	    }else if(inlen <= 16){ inlen = 16;
 	    }else{
-	    	count=1;
+	    	count=1; // Dem so khoi
 	    	for(short i=1; i<=inlen; i++){
 	    		if(i % 16 ==0) count++;
 	    	}
@@ -436,7 +456,8 @@ public class SCard extends Applet
 	    }
 	    return inlen;
     }
-    
+ 
+	// Tao cap khoa RSA
     private void genKeypair(APDU apdu){
 		byte[] buffer = apdu.getBuffer();
 		KeyPair keyPair = new KeyPair(KeyPair.ALG_RSA,(short)(8*sigLen));
@@ -454,26 +475,27 @@ public class SCard extends Applet
         priKeyLen += priKey.getModulus(rsaPriKey, priKeyLen);//N
         priKeyLen += priKey.getExponent(rsaPriKey, priKeyLen);//D
         JCSystem.beginTransaction();
-		rsaPubKeyLen = pubKeyLen;//do dai khóa RSA pub
-		rsaPriKeyLen = priKeyLen;// khóa RSA private
+		rsaPubKeyLen = pubKeyLen;//do dai khoa RSA pub
+		rsaPriKeyLen = priKeyLen;// khoa RSA private
 		JCSystem.commitTransaction();
 		JCSystem.requestObjectDeletion();
     }
     
+    // Tao chu ky so
     private void createSig(APDU apdu,short len){
 	    byte[] buffer = apdu.getBuffer();
-	    byte[] OTP = new byte[6];
+	    byte[] OTP = new byte[6]; //One-Time Password
 	    short OTPlen = 6;
 	    byte[] tempPriKey = new byte[(short)(256)];
 	    Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
 	    Util.arrayCopy(tempBuffer, (short)(0), OTP, (short)0, OTPlen);
 	    Util.arrayCopy(tempBuffer, (short)OTPlen, pintemp, (short)0, (short)(len-OTPlen));
-	    encrypt_AesCipher(apdu,pintemp, (short)pinlen);
+	    encrypt_AesCipher(apdu, pintemp, (short)pinlen);
         if(pin.check(pintemp, (short)0, (byte)pinlen) == true) {
         	decrypt_AesCipher(apdu, rsaPriKey, rsaPriKeyLen, tempPriKey, (short)0);
         	RSAPrivateKey PriKey = (RSAPrivateKey)KeyBuilder.buildKey(KeyBuilder.TYPE_RSA_PRIVATE,KeyBuilder.LENGTH_RSA_1024, false);
-			PriKey.setModulus(tempPriKey, (short)0, (short)(128));
-			PriKey.setExponent(tempPriKey, (short)128,(short)(128));
+			PriKey.setModulus(tempPriKey, (short)0, (short)(128)); //N
+			PriKey.setExponent(tempPriKey, (short)128,(short)(128)); //D
 			rsaSig.init(PriKey, Signature.MODE_SIGN);
 		    rsaSig.sign(OTP, (short)0, (short)(OTPlen),sig_buffer, (short)0);
 			apdu.setOutgoing();
@@ -483,6 +505,7 @@ public class SCard extends Applet
         JCSystem.requestObjectDeletion();
     }
     
+    // Xac minh chu ky so
     private void verifySigSuccess(APDU apdu, short len, short mod){
     	byte [] buffer = apdu.getBuffer();
     	byte[] OTP = new byte[6];
@@ -504,54 +527,54 @@ public class SCard extends Applet
 		    	money += (short)(tempBuffer[OTPlen+2]*16);
 		    	money += (short)(tempBuffer[OTPlen+3]);
 	    	}
-	    }else{
+	    }
+	    else{
 		    money += tempBuffer[OTPlen];
 	    }
-	   
-			if(mod == 0){
-				if ( (short)(sodu + money)  > MAX_LENGTH ){
-					Util.arrayCopy(status, (short)2, buffer, (short)0, (short)1);//gui 2
-				}
-				sodu += (short)money;
+	   // Nap tien
+		if(mod == 0){
+			if ( (short)(sodu + money)  > MAX_LENGTH ){
+				Util.arrayCopy(status, (short)2, buffer, (short)0, (short)1);//gui 2
+			}
+			sodu += (short)money;
+			Util.arrayCopy(status, (short)1, buffer, (short)0, (short)1);
+		}
+		// Thanh toan
+		if(mod == 1){
+			if ( (short)money<(short)0 || (short)sodu < (short)money ) {
+				Util.arrayCopy(status, (short)2, buffer, (short)0, (short)1);//gui 2
+			}
+			if(sodu >= (short)money){
+				sodu -= money;
 				Util.arrayCopy(status, (short)1, buffer, (short)0, (short)1);
-			}
-			
-			if(mod == 1){
-				if ( (short)money<(short)0 || (short)sodu < (short)money ) 
-				{
-					Util.arrayCopy(status, (short)2, buffer, (short)0, (short)1);//gui 2
-					}
-				if(sodu >= (short)money)
-				{
-					sodu -= money;
-					Util.arrayCopy(status, (short)1, buffer, (short)0, (short)1);
-				} 
-			}
-		
+			} 
+		}
 		apdu.setOutgoingAndSend((short)0, (short)1);
 		JCSystem.requestObjectDeletion();
     }
     
+    // Tra ve Public Key
     private void getPublicKey(APDU apdu, short len) {
         byte[] buffer = apdu.getBuffer();
-        short offset = (short) 128;
+        short offset = (short) 128; //vi tri bat dau DL tra ve
         switch (buffer[ISO7816.OFFSET_P1])
 		{
-			case (byte) 0x01 :
+			case (byte) 0x01 : // 0-127
 				Util.arrayCopy(rsaPubKey, (short) 0, buffer, (short) 0, offset);
-				apdu.setOutgoingAndSend((short) 0, offset);
+				apdu.setOutgoingAndSend((short) 0, offset); // Gui pubKey 
 				break;
 				
-			case (byte) 0x02 :
+			case (byte) 0x02 : // 128 tro di
 				short eLen = (short) (rsaPubKeyLen - offset);
 				Util.arrayCopy(rsaPubKey, offset, buffer, (short) 0, eLen);
-				apdu.setOutgoingAndSend((short) 0, eLen);
+				apdu.setOutgoingAndSend((short) 0, eLen); // Gui pubKey
 				break;
 			default:
-				ISOException.throwIt(ISO7816.SW_INCORRECT_P1P2);
+				ISOException.throwIt(ISO7816.SW_INCORRECT_P1P2); // Loi tham so khong hop le
 		}
     }
     
+    // Cap nhat so du
     private void update_balance(APDU apdu,short len){
     	byte[] buffer = apdu.getBuffer();
 	    
@@ -563,6 +586,7 @@ public class SCard extends Applet
 	    }
     }
     
+    // Thanh toan
     private void pay(APDU apdu, short len){
 	    byte[] buffer = apdu.getBuffer();
 	    
@@ -574,6 +598,7 @@ public class SCard extends Applet
 	    }
     }
     
+    // Thay doi ma PIN
     private void update_pin(APDU apdu,short len){
 	    byte[] buffer = apdu.getBuffer();
 	    apdu.setOutgoing();
@@ -582,20 +607,20 @@ public class SCard extends Applet
 	    if(len>6 && len <= PIN_maxsize){
 	    	pinlen = len;
 	    	encrypt_AesCipher(apdu,pintemp, (short)pinlen);
-		    pin.update(pintemp, (short)0, (byte)len);
+		    pin.update(pintemp, (short)0, (byte)len); // pin.update(byteArray, (short)offset, (byte)length);
 		    apdu.sendBytesLong(status, (short)1, (short)1);//gui 1
 	    }else apdu.sendBytesLong(status, (short)0, (short)1);//gui 0
     }
     
-    private void update_info(APDU apdu,short len){
-    	
+    // Cap nhat thong tin ca nhan
+    private void update_info(APDU apdu,short len){ 	
 	    short t1,t2;
 		t1=t2= 0;
 		byte[] buffer = apdu.getBuffer();
 		Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
 		for(short i=0; i<len ; i++){
 			if(tempBuffer[i] == (byte) 0x2e){
-				if(t1 ==0){
+				if(t1 ==0){ // so the
 					t1 = i;
 					sothelen = (short)t1;
 				}else {
@@ -615,6 +640,7 @@ public class SCard extends Applet
 		encrypt_AesCipher(apdu,ngaysinh,ngaysinhlen);
     }
     
+    // Lay so du
     private void getsodu(APDU apdu){
     	byte[] buffer = apdu.getBuffer();
     	Util.setShort(buffer, (short)0, sodu);

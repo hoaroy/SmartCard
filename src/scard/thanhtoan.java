@@ -37,7 +37,7 @@ public class thanhtoan extends javax.swing.JFrame {
     private void initComponents() {
 
         txt_sotien = new javax.swing.JTextField();
-        btn_NapTien = new javax.swing.JButton();
+        btn_ThanhToan = new javax.swing.JButton();
         txt_pin = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         txt_OTP = new javax.swing.JLabel();
@@ -60,11 +60,11 @@ public class thanhtoan extends javax.swing.JFrame {
             }
         });
 
-        btn_NapTien.setBackground(new java.awt.Color(204, 204, 204));
-        btn_NapTien.setText("Thanh toán");
-        btn_NapTien.addActionListener(new java.awt.event.ActionListener() {
+        btn_ThanhToan.setBackground(new java.awt.Color(204, 204, 204));
+        btn_ThanhToan.setText("Thanh toán");
+        btn_ThanhToan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_NapTienActionPerformed(evt);
+                btn_ThanhToanActionPerformed(evt);
             }
         });
 
@@ -125,7 +125,7 @@ public class thanhtoan extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(138, 138, 138)
-                        .addComponent(btn_NapTien, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btn_ThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(57, 57, 57)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,14 +177,14 @@ public class thanhtoan extends javax.swing.JFrame {
                         .addComponent(jLabel6))
                     .addComponent(txt_checkOTP, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
-                .addComponent(btn_NapTien, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_ThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_NapTienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_NapTienActionPerformed
+    private void btn_ThanhToanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ThanhToanActionPerformed
         String pin = Arrays.toString(txt_pin.getPassword());
         String checkotp = txt_checkOTP.getText();
         System.out.print(checkotp);
@@ -270,7 +270,7 @@ public class thanhtoan extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_btn_NapTienActionPerformed
+    }//GEN-LAST:event_btn_ThanhToanActionPerformed
     public boolean Verify_Signature(byte[] input,byte[] signatureToVerify) throws Exception{
          byte[] getModulusPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x01, (byte) 0x01};
           thebus.sendAPDUtoApplet(getModulusPubkey);
@@ -357,7 +357,7 @@ public class thanhtoan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_NapTien;
+    private javax.swing.JButton btn_ThanhToan;
     private javax.swing.JButton btn_otp;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

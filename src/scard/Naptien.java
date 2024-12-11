@@ -172,7 +172,7 @@ public class Naptien extends javax.swing.JFrame {
         }else{
             byte[] cmdcreateSig = {(byte) 0xA0, (byte) 0x16, (byte) 0x01, (byte) 0x00};
             String sotien = txt_sotien.getText();
-            String st = Integer.toHexString(Integer.valueOf(sotien));
+            String st = Integer.toHexString(Integer.valueOf(sotien)); //chuyen sotien sang hex
             short verifylen=0;
             if(Integer.valueOf(sotien)<= 255){
                 verifylen = 7;
@@ -190,8 +190,8 @@ public class Naptien extends javax.swing.JFrame {
                 txt_OTP.setText("OTP hết hạn.");
                 txt_checkOTP.setText("");
             }else{
-                byte[] input  = arraysend.getBytes();
-                String resCheck = String.format("%x", new BigInteger(1, aa));
+                byte[] input = arraysend.getBytes(); //chuyen thanh mang byte
+                String resCheck = String.format("%x", new BigInteger(1, aa)); //chuyen aa sang hex
                 boolean verifyCheck = true;
               
                 try {
@@ -199,50 +199,48 @@ public class Naptien extends javax.swing.JFrame {
                 } catch (Exception ex) {
                     Logger.getLogger(thanhtoan.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if(verifyCheck)
-                {
-                byte[] cmdverify = {(byte) 0xA0, (byte) 0x16, (byte) 0x02, (byte) 0x00};
-                byte[] verify = new byte[7];
-                if(verifylen == 7){
-                    byte[] b = checkotp.getBytes();
-                    System.arraycopy(b, (short)0, verify, (short)0, b.length);
-                    verify[6]= Byte.valueOf(st,16);
-                }
-                if(verifylen == 9){
-                    verify = new byte[verifylen];
-                    byte[] b = checkotp.getBytes();
-                    System.arraycopy(b, (short)0, verify, (short)0, b.length);
-                    String[] tach = st.split("",3);
-                    verify[6] = Byte.valueOf(tach[0],16);
-                    verify[7] = Byte.valueOf(tach[1],16);
-                    verify[8] = Byte.valueOf(tach[2],16);
-                }
-                if(verifylen == 10){
-                    verify = new byte[verifylen];
-                    byte[] b = checkotp.getBytes();
-                    System.arraycopy(b, (short)0, verify, (short)0, b.length);
-                    String[] tach = st.split("",4);
-                    verify[6] = Byte.valueOf(tach[0],16);
-                    verify[7] = Byte.valueOf(tach[1],16);
-                    verify[8] = Byte.valueOf(tach[2],16);
-                    verify[9] = Byte.valueOf(tach[3],16);
-                }
-                thebus.sendAPDUtoApplet(cmdverify, verify);
-                byte[] res = thebus.resAPDU.getData();
-                if(res[0] == 0x00){
-                    JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Xác thực lỗi");
-                    txt_OTP.setText("OTP hết hạn.");
-                    txt_checkOTP.setText("");
-                }else if (res[0] == 0x01){
-                    JOptionPane.showMessageDialog(this, "Giao dịch thành công.");
-                    setVisible(false);
-                }else if(res[0] == 0x02){
-                    JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số tiền giao dịch vượt tối đa");
-                    txt_OTP.setText("OTP hết hạn.");
-                    txt_checkOTP.setText("");
-                }
-                }else
-                {
+                if(verifyCheck){
+                    byte[] cmdverify = {(byte) 0xA0, (byte) 0x16, (byte) 0x02, (byte) 0x00};
+                    byte[] verify = new byte[7]; 
+                    if(verifylen == 7){ //do dai so tien
+                        byte[] b = checkotp.getBytes(); //chuyen otp sang byte
+                        System.arraycopy(b, (short)0, verify, (short)0, b.length);
+                        verify[6]= Byte.valueOf(st,16); //chuyen sotien tu hex sang byte
+                    }
+                    if(verifylen == 9){
+                        verify = new byte[verifylen];
+                        byte[] b = checkotp.getBytes();
+                        System.arraycopy(b, (short)0, verify, (short)0, b.length);
+                        String[] tach = st.split("",3);
+                        verify[6] = Byte.valueOf(tach[0],16); 
+                        verify[7] = Byte.valueOf(tach[1],16);
+                        verify[8] = Byte.valueOf(tach[2],16);
+                    }
+                    if(verifylen == 10){
+                        verify = new byte[verifylen];
+                        byte[] b = checkotp.getBytes();
+                        System.arraycopy(b, (short)0, verify, (short)0, b.length);
+                        String[] tach = st.split("",4);
+                        verify[6] = Byte.valueOf(tach[0],16);
+                        verify[7] = Byte.valueOf(tach[1],16);
+                        verify[8] = Byte.valueOf(tach[2],16);
+                        verify[9] = Byte.valueOf(tach[3],16);
+                    }
+                    thebus.sendAPDUtoApplet(cmdverify, verify);
+                    byte[] res = thebus.resAPDU.getData();
+                    if(res[0] == 0x00){
+                        JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Xác thực lỗi");
+                        txt_OTP.setText("OTP hết hạn.");
+                        txt_checkOTP.setText("");
+                    }else if (res[0] == 0x01){
+                        JOptionPane.showMessageDialog(this, "Giao dịch thành công.");
+                        setVisible(false);
+                    }else if(res[0] == 0x02){
+                        JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số tiền giao dịch vượt tối đa");
+                        txt_OTP.setText("OTP hết hạn.");
+                        txt_checkOTP.setText("");
+                    }
+                }else{
                      JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Xác thực lỗi");
                     txt_OTP.setText("OTP hết hạn.");
                     txt_checkOTP.setText("");
@@ -250,7 +248,9 @@ public class Naptien extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btn_NapTienActionPerformed
- public boolean Verify_Signature(byte[] input,byte[] signatureToVerify) throws Exception{
+    
+    //RSA
+    public boolean Verify_Signature(byte[] input,byte[] signatureToVerify) throws Exception{
          byte[] getModulusPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x01, (byte) 0x01};
           thebus.sendAPDUtoApplet(getModulusPubkey);
           BigInteger resModulusPubkey = new BigInteger(1, thebus.resAPDU.getData());
@@ -262,19 +262,20 @@ public class Naptien extends javax.swing.JFrame {
         exponentPubkey = resExponentPubkey;
         System.out.println("pubkey: "+modulusPubkey + " / "+exponentPubkey );
        
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(modulusPubkey, exponentPubkey);
-        PublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA"); //sd RSA de tao key
+        RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(modulusPubkey, exponentPubkey); //chua cac thanh phan cua pubKey
+        PublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec); //tap key
         
-        Signature signature = Signature.getInstance("MD5WithRSA");
-        signature.initVerify(key);
-        signature.update(input);
-        return signature.verify(signatureToVerify);
+        Signature signature = Signature.getInstance("MD5WithRSA"); //sd MD5 bam DL + RSA
+        signature.initVerify(key); // sd pubKey
+        signature.update(input); 
+        return signature.verify(signatureToVerify); //xac minh
     }
     private void txt_pinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_pinActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_pinActionPerformed
 
+    //Tao va hien thi OTP
     private void btn_otpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_otpActionPerformed
 //        byte[] cmdOTP = {(byte) 0xA0, (byte) 0x16, (byte) 0x00, (byte) 0x00};
 //        thebus.sendAPDUtoApplet(cmdOTP);
@@ -286,6 +287,8 @@ public class Naptien extends javax.swing.JFrame {
         }
         txt_OTP.setText(otp);
     }//GEN-LAST:event_btn_otpActionPerformed
+    
+    
     private static char[] generateOTP(int length) {
       String numbers = "158AB90HJNO234Uab67cdCDefghjKLouMklmEFGnywYW";
       Random random = new Random();
