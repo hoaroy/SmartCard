@@ -1,3 +1,37 @@
 build/
+<<<<<<< HEAD
+dist/
+
+*.class
+*.jar
+*.war
+*.exp
+
+# Java Card
+*.cap
+*.jca
+*.jad
+
+# Tệp log
+*.log
+
+# Các thư mục liên quan đến NetBeans
+.nbproject/
+
+# Tệp tạm thời và nhật ký
+*.tmp
+*.swp
+
+# Tệp biên dịch, nhị phân
+*.exe
+*.dll
+*.so
+*.o
+*.a
+
+.DS_Store
+Thumbs.db
+=======
 *.class
 
+>>>>>>> 1d079ff89bc87d152d74840fa67a7f185e53db3d
