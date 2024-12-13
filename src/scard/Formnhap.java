@@ -20,10 +20,13 @@ import javax.swing.JFrame;
 
 public class Formnhap extends javax.swing.JFrame {
     private info info;
+    private BusForm busForm; // Tham chiếu đến BusForm
+
     private static int counter = 100000; // Bộ đếm bắt đầu từ 100000
     
-    public Formnhap() {
+    public Formnhap(BusForm busForm) {
         info = new info();
+        this.busForm = busForm; // Gán tham chiếu
         initComponents();
     }
 
@@ -75,17 +78,12 @@ public class Formnhap extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
-        txt_hoten.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_hotenActionPerformed(evt);
-            }
-        });
-
         btn_ok.setBackground(new java.awt.Color(204, 204, 204));
         btn_ok.setText("Lưu");
         btn_ok.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_okActionPerformed(evt);
+                btn_senddataActionPerformed(evt);
             }
         });
 
@@ -189,12 +187,6 @@ public class Formnhap extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txt_hotenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_hotenActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_hotenActionPerformed
-    public int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
     private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
 String pin = Arrays.toString(txt_pin.getPassword());
     String checkpin = Arrays.toString(txt_checkpin.getPassword());
@@ -217,16 +209,21 @@ String pin = Arrays.toString(txt_pin.getPassword());
         info.setHoten(hoten);
         info.setNgaysinh(ngaysinh);
         info.setPin(pin);
-        BusForm.info = this.info;
-        
+        // Gán đối tượng info của BusForm
+        busForm.info = this.info;
+
+        // Gọi phương thức sendData từ BusForm
+        busForm.sendData();
         JOptionPane.showMessageDialog(null, "Khởi tạo nội dung thẻ thành công.");
         
+       
         // Xóa nội dung các trường
         txt_hoten.setText("");
         txt_ns.setText("");
         txt_pin.setText("");
         txt_checkpin.setText("");
         setVisible(false);
+        
     }
     }//GEN-LAST:event_btn_okActionPerformed
 
@@ -257,6 +254,10 @@ String pin = Arrays.toString(txt_pin.getPassword());
     private void txt_checkpinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_checkpinActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_checkpinActionPerformed
+
+    private void btn_senddataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_senddataActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_senddataActionPerformed
  
 
     

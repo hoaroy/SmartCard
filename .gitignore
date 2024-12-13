@@ -1,4 +1,5 @@
 build/
+<<<<<<< HEAD
 dist/
 
 *.class
@@ -30,3 +31,7 @@ dist/
 
 .DS_Store
 Thumbs.db
+=======
+*.class
+
+>>>>>>> 1d079ff89bc87d152d74840fa67a7f185e53db3d

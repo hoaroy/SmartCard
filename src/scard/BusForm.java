@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 public class BusForm extends javax.swing.JFrame {
     private final static byte PIN_trylimit = (byte) 0x03; // So lan nhap pin m
     private int pinTryCounter = PIN_trylimit; // bien luu tru so lan nhap con lai
+    private int serviceCount = 0;
     static info info;
     static theBus thebus;
     private Boolean input= false;
@@ -107,6 +108,8 @@ public class BusForm extends javax.swing.JFrame {
         btn_capnhat = new javax.swing.JButton();
         btn_thanhtoan = new javax.swing.JButton();
         bnt_naptien = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        txt_dichvu = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
         jLabel68 = new javax.swing.JLabel();
         jLabel69 = new javax.swing.JLabel();
@@ -132,7 +135,6 @@ public class BusForm extends javax.swing.JFrame {
         jLabel79 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         btn_init = new javax.swing.JButton();
-        btn_sendata = new javax.swing.JButton();
         btn_clear = new javax.swing.JButton();
         Button_Unblock = new javax.swing.JButton();
         Button_connect = new javax.swing.JButton();
@@ -228,12 +230,12 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(anhthe, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 130, 180));
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("Số dư:");
-        jPanel_info.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 260, -1, -1));
+        jLabel8.setText("Số lần sử dụng dịch vụ:");
+        jPanel_info.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 340, -1, -1));
         jPanel_info.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         txt_sodu.setText("0");
-        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 260, 50, -1));
+        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, 50, -1));
         jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, 170, 22));
         jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 150, 170, 22));
         jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, 170, 20));
@@ -253,14 +255,14 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 190, -1, 20));
 
         jLabel3.setText("Nhập mã PIN:");
-        jPanel_info.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 380, -1, -1));
+        jPanel_info.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 400, -1, -1));
 
         txt_pin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_pinActionPerformed(evt);
             }
         });
-        jPanel_info.add(txt_pin, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 370, 140, 30));
+        jPanel_info.add(txt_pin, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 390, 140, 30));
 
         Btn_Xemtt.setBackground(new java.awt.Color(139, 139, 122));
         Btn_Xemtt.setForeground(new java.awt.Color(255, 255, 255));
@@ -270,7 +272,7 @@ public class BusForm extends javax.swing.JFrame {
                 Btn_XemttActionPerformed(evt);
             }
         });
-        jPanel_info.add(Btn_Xemtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 370, 70, 32));
+        jPanel_info.add(Btn_Xemtt, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 390, 70, 32));
 
         btn_changePIN.setForeground(new java.awt.Color(15, 14, 14));
         btn_changePIN.setText("Thay đổi mã PIN");
@@ -307,6 +309,13 @@ public class BusForm extends javax.swing.JFrame {
             }
         });
         jPanel_info.add(bnt_naptien, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 490, 160, 30));
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel10.setText("Số dư:");
+        jPanel_info.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 250, -1, -1));
+
+        txt_dichvu.setText("0");
+        jPanel_info.add(txt_dichvu, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 340, 50, -1));
 
         jPanel11.setBackground(new java.awt.Color(255, 255, 255));
         jPanel11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -404,16 +413,7 @@ public class BusForm extends javax.swing.JFrame {
                 btn_initActionPerformed(evt);
             }
         });
-        jPanel5.add(btn_init, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 160, 30));
-
-        btn_sendata.setForeground(new java.awt.Color(15, 14, 14));
-        btn_sendata.setText("Gửi đến Applet");
-        btn_sendata.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_sendataActionPerformed(evt);
-            }
-        });
-        jPanel5.add(btn_sendata, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 160, 30));
+        jPanel5.add(btn_init, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 160, 30));
 
         btn_clear.setForeground(new java.awt.Color(15, 14, 14));
         btn_clear.setText("Xóa Thẻ");
@@ -422,7 +422,7 @@ public class BusForm extends javax.swing.JFrame {
                 btn_clearActionPerformed(evt);
             }
         });
-        jPanel5.add(btn_clear, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 180, 160, 30));
+        jPanel5.add(btn_clear, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 160, 30));
 
         Button_Unblock.setForeground(new java.awt.Color(15, 14, 14));
         Button_Unblock.setText("Mở khóa thẻ");
@@ -431,7 +431,7 @@ public class BusForm extends javax.swing.JFrame {
                 Button_UnblockActionPerformed(evt);
             }
         });
-        jPanel5.add(Button_Unblock, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, 160, 30));
+        jPanel5.add(Button_Unblock, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 160, 30));
 
         Button_connect.setForeground(new java.awt.Color(15, 14, 14));
         Button_connect.setText("Kết nối");
@@ -449,7 +449,7 @@ public class BusForm extends javax.swing.JFrame {
                 Button_DisconnectActionPerformed(evt);
             }
         });
-        jPanel5.add(Button_Disconnect, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 360, 160, 32));
+        jPanel5.add(Button_Disconnect, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 160, 32));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -459,7 +459,7 @@ public class BusForm extends javax.swing.JFrame {
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
@@ -468,12 +468,12 @@ public class BusForm extends javax.swing.JFrame {
                 .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(20, 20, 20))
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel_info, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 539, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel_info, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -553,7 +553,7 @@ public class BusForm extends javax.swing.JFrame {
     private void btn_initActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_initActionPerformed
         if(connected == true){
             if (input == false) {
-                Formnhap initform = new Formnhap();
+                Formnhap initform = new Formnhap(this);
                 initform.setVisible(true);
                 initform.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             }
@@ -582,51 +582,6 @@ public class BusForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Thẻ đã được mở khóa.");
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_Button_UnblockActionPerformed
-
-    private void btn_sendataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_sendataActionPerformed
-        if(connected == true){
-        if (input == false) {
-            setImage(info.getAvatar());
-            getImage(info.getAvatar());
-            //chuyen du lieu xuong applet
-            String sothe = info.getSothe();
-            String hoten = info.getHoten();
-            String ngaysinh = info.getNgaysinh();
-            String pin = info.getPin();
-            String arraysend = sothe.concat(".").concat(hoten).concat(".").concat(ngaysinh).concat(".").concat(pin);
-            System.out.println("send:"+arraysend);
-            int lc = arraysend.length();
-            byte datalen = (byte) lc; //do dai du lieu gui vao applet
-            byte[] cmd = {(byte) 0xA0, (byte) 0x10, (byte) 0x00, (byte) 0x00};
-            byte[] data = arraysend.getBytes();
-            setCommandAPDU(cmd, (byte)lc, data, (byte)0);
-            thebus.sendAPDUtoApplet(cmd, data);
-            byte[] dataRes = thebus.resAPDU.getData();
-            int le = thebus.resAPDU.getNr();
-            setResponseAPDU(dataRes, (byte)le);//hien thi du lieu phan hoi tu applet
-            String tach = new String(dataRes) ;
-            System.out.print("a:"+tach);
-            String[] a = tach.split(":");
-            String st = a[0];
-            String ht = a[1];
-            String ns = a[2];
-//            txt_sothe.setText(st);
-//            txt_hoten.setText(ht);
-//            txt_ngaysinh.setText(ns);
-            byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
-            thebus.sendAPDUtoApplet(cmd1);
-            byte[] b = thebus.resAPDU.getData();
-            String sodu = "";
-            for (int i = 0; i < b.length; i++) {
-                sodu += thebus.byteToHex(b[i]);
-            }
-//            txt_sodu.setText(""+Integer.valueOf(sodu,16).intValue()*1000);
-            input = true;
-        } else {
-            JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");
-        }
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
-    }//GEN-LAST:event_btn_sendataActionPerformed
 
     private void bnt_naptienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bnt_naptienActionPerformed
         if(connected ==true && cardready == true){
@@ -741,11 +696,17 @@ public class BusForm extends javax.swing.JFrame {
     private void btn_thanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_thanhtoanActionPerformed
         if(connected == true && cardready == true){
                 thanhtoan pay= new thanhtoan();
+                pay.setParent(this);
                 pay.setVisible(true);
                 pay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_thanhtoanActionPerformed
-
+   
+    public void updateServiceCount() {
+        int currentCount = Integer.parseInt(txt_dichvu.getText());
+        currentCount++; // Tăng số lần sử dụng dịch vụ
+        txt_dichvu.setText(String.valueOf(currentCount));
+    }
     /**
      * @param args the command line arguments
      */
@@ -782,6 +743,53 @@ public class BusForm extends javax.swing.JFrame {
             
         });
     }
+    
+    
+    public  void sendData() {
+    if (connected == true ) {
+        if (!input) {
+            setImage(info.getAvatar());
+            getImage(info.getAvatar());
+            // Chuyển dữ liệu xuống applet
+            String sothe = info.getSothe();
+            String hoten = info.getHoten();
+            String ngaysinh = info.getNgaysinh();
+            String pin = info.getPin();
+            String arraysend = sothe.concat(".").concat(hoten).concat(".").concat(ngaysinh).concat(".").concat(pin);
+            System.out.println("send:" + arraysend);
+            int lc = arraysend.length();
+            byte datalen = (byte) lc; // Độ dài dữ liệu gửi vào applet
+            byte[] cmd = {(byte) 0xA0, (byte) 0x10, (byte) 0x00, (byte) 0x00};
+            byte[] data = arraysend.getBytes();
+            setCommandAPDU(cmd, (byte) lc, data, (byte) 0);
+            thebus.sendAPDUtoApplet(cmd, data);
+            byte[] dataRes = thebus.resAPDU.getData();
+            int le = thebus.resAPDU.getNr();
+            setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
+            String tach = new String(dataRes);
+            System.out.print("a:" + tach);
+            String[] a = tach.split(":");
+            String st = a[0];
+            String ht = a[1];
+            String ns = a[2];
+
+            byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
+            thebus.sendAPDUtoApplet(cmd1);
+            byte[] b = thebus.resAPDU.getData();
+            String sodu = "";
+            for (int i = 0; i < b.length; i++) {
+                sodu += thebus.byteToHex(b[i]);
+            }
+
+            input = true;
+        } else {
+            JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");
+        }
+    } else {
+        JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+    }
+}
+
     private void setImage(byte [] img){
         if(img == null) return;
         byte[] cmd = {(byte) 0xA0, (byte) 0x12, (byte) 0x01, (byte) 0x00};
@@ -871,11 +879,11 @@ public class BusForm extends javax.swing.JFrame {
     private javax.swing.JButton btn_changePIN;
     private javax.swing.JButton btn_clear;
     private javax.swing.JButton btn_init;
-    private javax.swing.JButton btn_sendata;
     private javax.swing.JButton btn_thanhtoan;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
@@ -904,6 +912,7 @@ public class BusForm extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField txt_cla;
     private javax.swing.JTextField txt_cmd;
+    private javax.swing.JLabel txt_dichvu;
     private javax.swing.JLabel txt_hoten;
     private javax.swing.JTextField txt_ins;
     private javax.swing.JTextField txt_lc;
