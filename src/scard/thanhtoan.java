@@ -21,6 +21,15 @@ public class thanhtoan extends javax.swing.JFrame {
     private theBus thebus;
     String otp;
     BigInteger modulusPubkey,exponentPubkey ;
+    private BusForm parent;
+
+    public void setParent(BusForm parent) {
+        this.parent = parent;
+    }
+
+    public BusForm getParent() {
+        return parent;
+    }
     
     public thanhtoan() {
         this.thebus = BusForm.thebus;
@@ -256,6 +265,9 @@ public class thanhtoan extends javax.swing.JFrame {
                     txt_checkOTP.setText("");
                 }else if (res[0] == 0x01){
                     JOptionPane.showMessageDialog(this, "Giao dịch thành công.");
+                    if (parent != null) {
+                        parent.updateServiceCount(); // Cập nhật số lần sử dụng dịch vụ
+                    }
                     setVisible(false);
                 }else if(res[0] == 0x02){
                     JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số dư không đủ");
@@ -371,4 +383,5 @@ public class thanhtoan extends javax.swing.JFrame {
     private javax.swing.JPasswordField txt_pin;
     private javax.swing.JTextField txt_sotien;
     // End of variables declaration//GEN-END:variables
+
 }
