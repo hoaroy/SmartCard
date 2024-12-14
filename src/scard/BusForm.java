@@ -486,6 +486,7 @@ public class BusForm extends javax.swing.JFrame {
         txt_ngaysinh.setText("");
         txt_pin.setText("");
         txt_sodu.setText("");
+        txt_dichvu.setText("");
         anhthe.setIcon(null);
         Button_connect.setText("Kết nối");
         Button_connect.setBackground(Azalea);
@@ -543,6 +544,7 @@ public class BusForm extends javax.swing.JFrame {
                 txt_ngaysinh.setText("");
                 txt_pin.setText("");
                 txt_sodu.setText("");
+                txt_dichvu.setText("");
                 JOptionPane.showMessageDialog(null, "Thẻ đã xóa dữ liệu.");
                 input=false;
             }   
@@ -637,6 +639,14 @@ public class BusForm extends javax.swing.JFrame {
                             sodu += thebus.byteToHex(b[i]);
                         }   int sd = Integer.valueOf(sodu, 16).intValue() * 1000;
                         txt_sodu.setText("" + sd);
+                        byte [] cmd2 = {(byte) 0xA0, (byte) 0x23, (byte) 0x00, (byte) 0x00};
+                        thebus.sendAPDUtoApplet(cmd2);
+                        byte[] c = thebus.resAPDU.getData();
+                        String dichvu = "";
+                        for (int i = 0; i < c.length; i++) {
+                            dichvu += thebus.byteToHex(c[i]);
+                        }   int dv = Integer.valueOf(dichvu, 16).intValue();
+                        txt_dichvu.setText("" + dv);
                         break;
                     default:
                         JOptionPane.showMessageDialog(null,
@@ -702,11 +712,11 @@ public class BusForm extends javax.swing.JFrame {
         }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_thanhtoanActionPerformed
    
-    public void updateServiceCount() {
-        int currentCount = Integer.parseInt(txt_dichvu.getText());
-        currentCount++; // Tăng số lần sử dụng dịch vụ
-        txt_dichvu.setText(String.valueOf(currentCount));
-    }
+    //public void updateServiceCount() {
+    //    int currentCount = Integer.parseInt(txt_dichvu.getText());
+    //    currentCount++; // Tăng số lần sử dụng dịch vụ
+    //    txt_dichvu.setText(String.valueOf(currentCount));
+    //}
     /**
      * @param args the command line arguments
      */
@@ -780,7 +790,13 @@ public class BusForm extends javax.swing.JFrame {
             for (int i = 0; i < b.length; i++) {
                 sodu += thebus.byteToHex(b[i]);
             }
-
+            byte[] cmd2 = {(byte) 0xA0, (byte) 0x23, (byte) 0x00, (byte) 0x00};
+            thebus.sendAPDUtoApplet(cmd2);
+            byte[] c = thebus.resAPDU.getData();
+            String dichvu = "";
+            for (int i = 0; i < c.length; i++) {
+                dichvu += thebus.byteToHex(c[i]);
+            }
             input = true;
         } else {
             JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");

@@ -265,9 +265,9 @@ public class thanhtoan extends javax.swing.JFrame {
                     txt_checkOTP.setText("");
                 }else if (res[0] == 0x01){
                     JOptionPane.showMessageDialog(this, "Giao dịch thành công.");
-                    if (parent != null) {
-                        parent.updateServiceCount(); // Cập nhật số lần sử dụng dịch vụ
-                    }
+                //    if (parent != null) {
+                //        parent.updateServiceCount(); // Cập nhật số lần sử dụng dịch vụ
+                //    }
                     setVisible(false);
                 }else if(res[0] == 0x02){
                     JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số dư không đủ");
