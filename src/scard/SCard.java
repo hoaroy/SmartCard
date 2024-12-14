@@ -8,7 +8,7 @@ public class SCard extends Applet
 {
 	private static byte[] pintemp, sothe, hoten, ngaysinh, quequan;
 	private OwnerPIN pin;
-	private static short sodu, pinlen, sothelen, hotenlen, ngaysinhlen, quequanlen, count;
+	private static short sodu, pinlen, sothelen, hotenlen, ngaysinhlen, quequanlen, count, dichvu;
 	private final static byte CLA = (byte) 0xA0;
 	//image
 	private byte[] image1,image2,image3,image4;
@@ -29,6 +29,7 @@ public class SCard extends Applet
 	private final static byte INS_UNBLOCK = (byte) 0x20;		//Mo khoa the 
 	private final static byte INS_GETSD = (byte) 0x21;			//Lay thong tin so du
 	private final static byte INS_GETPUBKEY = (byte) 0x22;		//Lay khoa cong khai RSA
+	private final static byte INS_GETDV = (byte) 0x23;			//So lan su dung dich vu
 
 	private MessageDigest md5;
 	private Cipher aescipher;
@@ -54,6 +55,7 @@ public class SCard extends Applet
 		quequan = new byte[64];
 		pintoKey = new byte[16];
 		sodu = 0;
+		dichvu = 0;
 		// image 
 		image1 = new byte[MAX_LENGTH];
 		image2 = new byte[MAX_LENGTH];
@@ -153,6 +155,9 @@ public class SCard extends Applet
 	    case INS_GETPUBKEY: //Lay khoa cong khai RSA
 	    	getPublicKey(apdu,len);
 	    	break;
+	    case INS_GETDV: //So lan su dung dich vu
+	    	getdichvu(apdu);
+	    	break;
 		default: 
 			ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
 		}
@@ -209,7 +214,7 @@ public class SCard extends Applet
 		//dau :
 		Util.arrayFillNonAtomic(tempBuffer, (short) (sothelen + hotenlen + 1), (short) 1, (byte) 0x3A);
 		Util.arrayFillNonAtomic(tempBuffer, (short) (sothelen + hotenlen + ngaysinhlen + 2), (short) 1, (byte) 0x3A);
-		//Util.setShort(tempBuffer,(short)(sothelen + hotenlen + ngaysinhlen + loaithelen + thoihanlen + 5), sodu);
+		//Util.setShort(tempBuffer,(short)(sothelen + hotenlen + ngaysinhlen + loaithelen + thoihanlen + 5), sodu, dichvu);
 		short totallen = (short)(sothelen+hotenlen+ngaysinhlen+2);
 		//Util.arrayCopy(tempBuffer, (short) 0, buffer, (short)0, (short)totallen);
         //apdu.setOutgoingAndSend((short) 0, (short)(1));
@@ -231,7 +236,7 @@ public class SCard extends Applet
         Util.arrayFillNonAtomic(tempBuffer, sothelen, (short) 1, (byte) 0x3A);//dau :
 		Util.arrayFillNonAtomic(tempBuffer, (short)(sothelen+hotenlen+1), (short)1, (byte) 0x3A);
 		Util.arrayFillNonAtomic(tempBuffer, (short) (sothelen+ hotenlen+ngaysinhlen+2), (short) 1, (byte) 0x3A);
-		//Util.setShort(tempBuffer, (short)(sothelen+hotenlen+ngaysinhlen+loaithelen+thoihanlen+5),sodu);
+		//Util.setShort(tempBuffer, (short)(sothelen+hotenlen+ngaysinhlen+loaithelen+thoihanlen+5),sodu, dichvu);
 		Util.arrayCopy(tempBuffer, (short)0, buffer, (short) 0, len);
         apdu.setOutgoingAndSend((short)0, len);
 }
@@ -241,6 +246,7 @@ public class SCard extends Applet
 		sothelen = (short) 0 ;
         hotenlen = (short) 0;
         ngaysinhlen = (short) 0;
+        dichvu = (short) 0;
         Util.arrayFillNonAtomic(sothe, (short) 0, (short) 32, (byte) 0);
         Util.arrayFillNonAtomic(hoten, (short) 0, (short) 64, (byte) 0);
         Util.arrayFillNonAtomic(ngaysinh, (short) 0, (short) 16, (byte) 0);
@@ -454,8 +460,8 @@ public class SCard extends Applet
         priKeyLen += priKey.getModulus(rsaPriKey, priKeyLen);//N
         priKeyLen += priKey.getExponent(rsaPriKey, priKeyLen);//D
         JCSystem.beginTransaction();
-		rsaPubKeyLen = pubKeyLen;//do dai kh�a RSA pub
-		rsaPriKeyLen = priKeyLen;// kh�a RSA private
+		rsaPubKeyLen = pubKeyLen;//do dai khoa RSA pub
+		rsaPriKeyLen = priKeyLen;// khoa RSA private
 		JCSystem.commitTransaction();
 		JCSystem.requestObjectDeletion();
     }
@@ -524,6 +530,7 @@ public class SCard extends Applet
 				if(sodu >= (short)money)
 				{
 					sodu -= money;
+					dichvu += 1;
 					Util.arrayCopy(status, (short)1, buffer, (short)0, (short)1);
 				} 
 			}
@@ -618,6 +625,12 @@ public class SCard extends Applet
     private void getsodu(APDU apdu){
     	byte[] buffer = apdu.getBuffer();
     	Util.setShort(buffer, (short)0, sodu);
+	    apdu.setOutgoingAndSend((short)0, (short)(2));
+    }
+    
+    private void getdichvu(APDU apdu){
+	    byte[] buffer = apdu.getBuffer();
+    	Util.setShort(buffer, (short)0, dichvu);
 	    apdu.setOutgoingAndSend((short)0, (short)(2));
     }
 }
