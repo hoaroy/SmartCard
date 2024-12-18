@@ -165,8 +165,8 @@ public class SCard extends Applet
 	
 	//Khoi tao thong tin ca nhan 
 	private void init_info(APDU apdu, short len){
-		short t1,t2,t3;
-		t1=t2=t3= 0;
+		short t1,t2,t3, t4, t5;
+		t1=t2=t3=t4=t5= 0;
 		byte[] buffer = apdu.getBuffer();
 		Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
 		for(short i=0; i<len ; i++){
