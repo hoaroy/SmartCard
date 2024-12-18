@@ -7,6 +7,7 @@ package scard;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.WindowListener;
 import java.util.Arrays;
 import javax.swing.ImageIcon;
@@ -17,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -37,14 +39,18 @@ public class BusForm extends javax.swing.JFrame {
     private boolean connected= false;
     public byte[] rsaPubKey = new byte[128];
     public Color Azalea = new Color(251,197,197);
+    private String Thexebus;
     
     public BusForm() {
         info = new info();
         thebus = new theBus();
         initComponents();
     }
-
-    //hien thi apdu lenh len GUI
+    
+    //URL urlThexebus = BusForm.class.getResource("Thexebus.jpg");
+    //Image img = Toolkit.getDefaultToolkit().createImage(Thexebus);
+    //this.setIconImage(img);
+   //hien thi apdu lenh len GUI
     public void setCommandAPDU(byte[] cmnds, byte lc,byte[] data, byte le) {
         txt_cla.setText(thebus.byteToHex(cmnds[0]));
         txt_ins.setText(thebus.byteToHex(cmnds[1]));
@@ -110,6 +116,7 @@ public class BusForm extends javax.swing.JFrame {
         bnt_naptien = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         txt_dichvu = new javax.swing.JLabel();
+        Bg_BusForm2 = new javax.swing.JLabel();
         jPanel11 = new javax.swing.JPanel();
         jLabel68 = new javax.swing.JLabel();
         jLabel69 = new javax.swing.JLabel();
@@ -139,6 +146,7 @@ public class BusForm extends javax.swing.JFrame {
         Button_Unblock = new javax.swing.JButton();
         Button_connect = new javax.swing.JButton();
         Button_Disconnect = new javax.swing.JButton();
+        Bg_BusForm1 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -220,12 +228,13 @@ public class BusForm extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel2.setText("ID thẻ:");
-        jPanel_info.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 110, 50, 25));
+        jPanel_info.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 100, 50, 25));
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel5.setText("Họ tên:");
-        jPanel_info.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 150, 51, 20));
+        jPanel_info.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 140, 51, 20));
 
+        anhthe.setBackground(new java.awt.Color(0, 0, 0));
         anhthe.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel_info.add(anhthe, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 130, 180));
 
@@ -235,13 +244,12 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         txt_sodu.setText("0");
-        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 250, 50, -1));
-        jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, 170, 22));
-        jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 150, 170, 22));
-        jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 190, 170, 20));
+        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 50, -1));
+        jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, 170, 22));
+        jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 140, 170, 22));
+        jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, 170, 20));
 
-        Btn_thayanh.setBackground(new java.awt.Color(139, 139, 122));
-        Btn_thayanh.setForeground(new java.awt.Color(255, 255, 255));
+        Btn_thayanh.setBackground(new java.awt.Color(153, 255, 204));
         Btn_thayanh.setText("Thay ảnh");
         Btn_thayanh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -252,8 +260,10 @@ public class BusForm extends javax.swing.JFrame {
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText("Ngày sinh:");
-        jPanel_info.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 190, -1, 20));
+        jPanel_info.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 180, -1, 20));
 
+        jLabel3.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Nhập mã PIN:");
         jPanel_info.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 400, -1, -1));
 
@@ -264,8 +274,7 @@ public class BusForm extends javax.swing.JFrame {
         });
         jPanel_info.add(txt_pin, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 390, 140, 30));
 
-        Btn_Xemtt.setBackground(new java.awt.Color(139, 139, 122));
-        Btn_Xemtt.setForeground(new java.awt.Color(255, 255, 255));
+        Btn_Xemtt.setBackground(new java.awt.Color(153, 255, 204));
         Btn_Xemtt.setText("Enter");
         Btn_Xemtt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -290,7 +299,7 @@ public class BusForm extends javax.swing.JFrame {
                 btn_capnhatActionPerformed(evt);
             }
         });
-        jPanel_info.add(btn_capnhat, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 450, 160, 30));
+        jPanel_info.add(btn_capnhat, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 450, 160, 30));
 
         btn_thanhtoan.setForeground(new java.awt.Color(15, 14, 14));
         btn_thanhtoan.setText("Thanh toán");
@@ -308,14 +317,17 @@ public class BusForm extends javax.swing.JFrame {
                 bnt_naptienActionPerformed(evt);
             }
         });
-        jPanel_info.add(bnt_naptien, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 490, 160, 30));
+        jPanel_info.add(bnt_naptien, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 490, 160, 30));
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel10.setText("Số dư:");
-        jPanel_info.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 250, -1, -1));
+        jPanel_info.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 280, -1, -1));
 
         txt_dichvu.setText("0");
         jPanel_info.add(txt_dichvu, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 340, 50, -1));
+
+        Bg_BusForm2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Res/Thexebus.jpg"))); // NOI18N
+        jPanel_info.add(Bg_BusForm2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 480, 550));
 
         jPanel11.setBackground(new java.awt.Color(255, 255, 255));
         jPanel11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -413,16 +425,16 @@ public class BusForm extends javax.swing.JFrame {
                 btn_initActionPerformed(evt);
             }
         });
-        jPanel5.add(btn_init, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 160, 30));
+        jPanel5.add(btn_init, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 100, 30));
 
         btn_clear.setForeground(new java.awt.Color(15, 14, 14));
-        btn_clear.setText("Xóa Thẻ");
+        btn_clear.setText("Xóa thẻ");
         btn_clear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_clearActionPerformed(evt);
             }
         });
-        jPanel5.add(btn_clear, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 160, 30));
+        jPanel5.add(btn_clear, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 160, 100, 30));
 
         Button_Unblock.setForeground(new java.awt.Color(15, 14, 14));
         Button_Unblock.setText("Mở khóa thẻ");
@@ -431,7 +443,7 @@ public class BusForm extends javax.swing.JFrame {
                 Button_UnblockActionPerformed(evt);
             }
         });
-        jPanel5.add(Button_Unblock, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 160, 30));
+        jPanel5.add(Button_Unblock, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 240, 100, 30));
 
         Button_connect.setForeground(new java.awt.Color(15, 14, 14));
         Button_connect.setText("Kết nối");
@@ -440,7 +452,7 @@ public class BusForm extends javax.swing.JFrame {
                 Button_connectActionPerformed(evt);
             }
         });
-        jPanel5.add(Button_connect, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 160, 30));
+        jPanel5.add(Button_connect, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 320, 100, 30));
 
         Button_Disconnect.setForeground(new java.awt.Color(15, 14, 14));
         Button_Disconnect.setText("Ngắt kết nối");
@@ -449,7 +461,10 @@ public class BusForm extends javax.swing.JFrame {
                 Button_DisconnectActionPerformed(evt);
             }
         });
-        jPanel5.add(Button_Disconnect, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 160, 32));
+        jPanel5.add(Button_Disconnect, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 400, 100, 32));
+
+        Bg_BusForm1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Res/xebus.jpg"))); // NOI18N
+        jPanel5.add(Bg_BusForm1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 780));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -459,7 +474,7 @@ public class BusForm extends javax.swing.JFrame {
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
@@ -884,6 +899,8 @@ public class BusForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Bg_BusForm1;
+    private javax.swing.JLabel Bg_BusForm2;
     private javax.swing.JButton Btn_Xemtt;
     private javax.swing.JButton Btn_thayanh;
     private javax.swing.JButton Button_Disconnect;
