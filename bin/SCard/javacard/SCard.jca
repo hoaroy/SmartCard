@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Sat Dec 14 00:53:30 ICT 2024
+// on Sun Dec 15 22:10:51 ICT 2024
 
 .package SCard {
 	.aid 0x11:0x22:0x33:0x44:0x55;
@@ -701,20 +701,24 @@
 
 		.method private init_info(Ljavacard/framework/APDU;S)V {
 			.stack 7;
-			.locals 5;
+			.locals 7;
 
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 				L0:	sconst_0;
 					dup;
-					sstore 5;
+					sstore 7;
 				L1:	dup;
+					sstore 6;
+				L2:	dup;
+					sstore 5;
+				L3:	dup;
 					sstore 4;
-				L2:	sstore_3;
-				L3:	aload_1;
+				L4:	sstore_3;
+				L5:	aload_1;
 					invokevirtual 38;		// getBuffer()[B
-					astore 6;
-				L4:	aload 6;
+					astore 8;
+				L6:	aload 8;
 					sconst_5;
 					getfield_a_this 16;		// reference SCard/SCard.tempBuffer
 					sconst_0;
@@ -722,25 +726,25 @@
 					invokestatic 67;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					sconst_0;
-					sstore 7;
-				L5:	sload 7;
+					sstore 9;
+				L7:	sload 9;
 					sload_2;
-					if_scmpge L14;
-				L6:	getfield_a_this 16;		// reference SCard/SCard.tempBuffer
-					sload 7;
+					if_scmpge L16;
+				L8:	getfield_a_this 16;		// reference SCard/SCard.tempBuffer
+					sload 9;
 					baload;
 					bspush 46;
-					if_scmpne L13;
-				L7:	sload_3;
-					ifne L9;
-				L8:	sload 7;
+					if_scmpne L15;
+				L9:	sload_3;
+					ifne L11;
+				L10:	sload 9;
 					sstore_3;
 					sload_3;
 					putstatic_s 68;		// short SCard/SCard.sothelen
-					goto L13;
-				L9:	sload 4;
-					ifne L11;
-				L10:	sload 7;
+					goto L15;
+				L11:	sload 4;
+					ifne L13;
+				L12:	sload 9;
 					sstore 4;
 					sload 4;
 					sload_3;
@@ -748,10 +752,10 @@
 					sconst_1;
 					ssub;
 					putstatic_s 69;		// short SCard/SCard.hotenlen
-					goto L13;
-				L11:	sload 5;
-					ifne L13;
-				L12:	sload 7;
+					goto L15;
+				L13:	sload 5;
+					ifne L15;
+				L14:	sload 9;
 					sstore 5;
 					sload 5;
 					sload 4;
@@ -765,9 +769,9 @@
 					sconst_1;
 					ssub;
 					putstatic_s 71;		// short SCard/SCard.pinlen
-				L13:	sinc 7 1;
-					goto L5;
-				L14:	getfield_a_this 16;		// reference SCard/SCard.tempBuffer
+				L15:	sinc 9 1;
+					goto L7;
+				L16:	getfield_a_this 16;		// reference SCard/SCard.tempBuffer
 					sconst_0;
 					getstatic_a 48;		// reference SCard/SCard.sothe
 					sconst_0;
@@ -902,17 +906,17 @@
 					sadd;
 					sconst_2;
 					sadd;
-					sstore 7;
-				L15:	getfield_a_this 16;		// reference SCard/SCard.tempBuffer
+					sstore 9;
+				L17:	getfield_a_this 16;		// reference SCard/SCard.tempBuffer
 					sconst_0;
-					aload 6;
+					aload 8;
 					sconst_0;
-					sload 7;
+					sload 9;
 					invokestatic 67;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					aload_1;
 					sconst_0;
-					sload 7;
+					sload 9;
 					invokevirtual 78;		// setOutgoingAndSend(SS)V
 					return;
 		}
