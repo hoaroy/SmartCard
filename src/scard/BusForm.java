@@ -245,7 +245,7 @@ public class BusForm extends javax.swing.JFrame {
 
         txt_sodu.setText("0");
         jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 50, -1));
-        jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 100, 170, 22));
+        jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 170, 22));
         jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 140, 170, 22));
         jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, 170, 20));
 

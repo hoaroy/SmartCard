@@ -11,8 +11,8 @@ public class SCard extends Applet
 	private static short sodu, pinlen, sothelen, hotenlen, ngaysinhlen, quequanlen, count, dichvu;
 	private final static byte CLA = (byte) 0xA0;
 	//image
-	private byte[] image1,image2,image3,image4;
-    private short imagelen1,imagelen2,imagelen3,imagelen4, lenback1, lenback2, lenback3,lenback4, pointer1,pointer2, pointer3, pointer4;
+	private byte[] image1, image2, image3, image4;
+    private short imagelen1, imagelen2, imagelen3, imagelen4, lenback1, lenback2, lenback3, lenback4, pointer1, pointer2, pointer3, pointer4;
     public static final short MAX_LENGTH = (short)(0x7FFF);  //32KB
     
 	//khai bao INS apdu lenh	
@@ -37,7 +37,7 @@ public class SCard extends Applet
 	private final static byte PIN_trylimit= (byte)0x03;
 	private final static byte PIN_maxsize= (byte)0x44;
 	private final static byte[] status = {(byte)0x00,(byte)0x01,(byte)0x02};
-                    final private byte[] tempBuffer, pintoKey, sig_buffer, rsaPriKey, rsaPubKey;
+    final private byte[] tempBuffer, pintoKey, sig_buffer, rsaPriKey, rsaPubKey;
 	private Signature rsaSig;
 	private short sigLen, rsaPriKeyLen, rsaPubKeyLen;
 	private RandomData ranData;
@@ -73,7 +73,7 @@ public class SCard extends Applet
 		rsaPubKeyLen = 0;
         rsaPriKeyLen = 0;
 		sig_buffer = new byte[sigLen];
-		rsaSig = Signature.getInstance(Signature.ALG_RSA_SHA_PKCS1,false);
+		rsaSig = Signature.getInstance(Signature.ALG_RSA_MD5_PKCS1,false);
 		tempBuffer = JCSystem.makeTransientByteArray((short) 256, JCSystem.CLEAR_ON_DESELECT);
 		register();
 		JCSystem.requestObjectDeletion();
@@ -347,7 +347,7 @@ public class SCard extends Applet
     
     private void  setAesKey(APDU apdu, byte[] in, short len){
     	byte[] buffer = apdu.getBuffer();
-	    short md5len = md5.doFinal(in, (short)0, (short)len, buffer, (short)0);
+		short md5len = md5.doFinal(in, (short)0, (short)len, buffer, (short)0);
 	    JCSystem.beginTransaction();
 	    Util.arrayCopy(buffer , (short)0, pintoKey, (short)0, (short)md5len);
 	    JCSystem.commitTransaction();
@@ -466,78 +466,60 @@ public class SCard extends Applet
 		JCSystem.requestObjectDeletion();
     }
     
-    private void createSig(APDU apdu,short len){
-	    byte[] buffer = apdu.getBuffer();
-	    byte[] OTP = new byte[6];
-	    short OTPlen = 6;
-	    byte[] tempPriKey = new byte[(short)(256)];
-	    Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
-	    Util.arrayCopy(tempBuffer, (short)(0), OTP, (short)0, OTPlen);
-	    Util.arrayCopy(tempBuffer, (short)OTPlen, pintemp, (short)0, (short)(len-OTPlen));
-	    encrypt_AesCipher(apdu,pintemp, (short)pinlen);
-        if(pin.check(pintemp, (short)0, (byte)pinlen) == true) {
-        	decrypt_AesCipher(apdu, rsaPriKey, rsaPriKeyLen, tempPriKey, (short)0);
-        	RSAPrivateKey PriKey = (RSAPrivateKey)KeyBuilder.buildKey(KeyBuilder.TYPE_RSA_PRIVATE,KeyBuilder.LENGTH_RSA_1024, false);
+    private void createSig(APDU apdu, short len) {
+		byte[] buffer = apdu.getBuffer();
+		byte[] tempPriKey = new byte[(short)(256)];
+		Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
+		Util.arrayCopy(tempBuffer, (short)0, pintemp, (short)0, len);
+
+		encrypt_AesCipher(apdu, pintemp, (short)pinlen);
+		if (pin.check(pintemp, (short)0, (byte)pinlen)) {
+			decrypt_AesCipher(apdu, rsaPriKey, rsaPriKeyLen, tempPriKey, (short)0);
+			RSAPrivateKey PriKey = (RSAPrivateKey)KeyBuilder.buildKey(KeyBuilder.TYPE_RSA_PRIVATE, KeyBuilder.LENGTH_RSA_1024, false);
 			PriKey.setModulus(tempPriKey, (short)0, (short)(128));
-			PriKey.setExponent(tempPriKey, (short)128,(short)(128));
+			PriKey.setExponent(tempPriKey, (short)128, (short)(128));
 			rsaSig.init(PriKey, Signature.MODE_SIGN);
-		    rsaSig.sign(OTP, (short)0, (short)(OTPlen),sig_buffer, (short)0);
+
+			rsaSig.sign(tempBuffer, (short)0, len, sig_buffer, (short)0);
 			apdu.setOutgoing();
 			apdu.setOutgoingLength((short)sigLen);
 			apdu.sendBytesLong(sig_buffer, (short)0, (short)sigLen);
-        }else apdu.sendBytesLong(status,(short)0,(short)1); // gui 0
-        JCSystem.requestObjectDeletion();
-    }
-    
-    private void verifySigSuccess(APDU apdu, short len, short mod){
-    	byte [] buffer = apdu.getBuffer();
-    	byte[] OTP = new byte[6];
-    	//byte[] tempPubKey = new byte[rsaPubKeyLen];
-	    short OTPlen = 6;
-	    Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
-	    Util.arrayCopy(tempBuffer, (short)0, OTP, (short)0, OTPlen);
-	    short money=0;
-	    
-	    if((short)(len-OTPlen) != (short)1){
-	    	if((short)(len-OTPlen) ==3){
-		    	money += (short)(tempBuffer[OTPlen]*256);
-		    	money += (short)(tempBuffer[OTPlen+1]*16);
-		    	money += (short)(tempBuffer[OTPlen+2]);
-	    	}
-	    	if((short)(len-OTPlen) ==4){
-		    	money += (short)(tempBuffer[OTPlen]*256*16);
-		    	money += (short)(tempBuffer[OTPlen+1]*256);
-		    	money += (short)(tempBuffer[OTPlen+2]*16);
-		    	money += (short)(tempBuffer[OTPlen+3]);
-	    	}
-	    }else{
-		    money += tempBuffer[OTPlen];
-	    }
-	   
-			if(mod == 0){
-				if ( (short)(sodu + money)  > MAX_LENGTH ){
-					Util.arrayCopy(status, (short)2, buffer, (short)0, (short)1);//gui 2
-				}
-				sodu += (short)money;
-				Util.arrayCopy(status, (short)1, buffer, (short)0, (short)1);
-			}
-			
-			if(mod == 1){
-				if ( (short)money<(short)0 || (short)sodu < (short)money ) 
-				{
-					Util.arrayCopy(status, (short)2, buffer, (short)0, (short)1);//gui 2
-					}
-				if(sodu >= (short)money)
-				{
-					sodu -= money;
-					dichvu += 1;
-					Util.arrayCopy(status, (short)1, buffer, (short)0, (short)1);
-				} 
-			}
-		
-		apdu.setOutgoingAndSend((short)0, (short)1);
+		} else {
+			apdu.sendBytesLong(status, (short)0, (short)1); // gui 0
+		}
 		JCSystem.requestObjectDeletion();
-    }
+	}
+
+	private void verifySigSuccess(APDU apdu, short len, short mod) {
+		byte[] buffer = apdu.getBuffer();
+		short money = 0;
+		
+		//Doc so tien tu buffer
+		if(len == 1) {
+			money = (short)(buffer[ISO7816.OFFSET_CDATA] & 0xFF);
+		} else if(len == 2) {
+			money = (short)(((buffer[ISO7816.OFFSET_CDATA] & 0xFF) << 8) | 
+						   (buffer[ISO7816.OFFSET_CDATA + 1] & 0xFF));
+		}
+
+		if (mod == 0) { //Nap tien
+			if ((short)(sodu + money) > MAX_LENGTH) {
+				buffer[0] = 0x02; 
+			} else {
+				sodu = (short)(sodu + money);
+				buffer[0] = 0x01; 
+			}
+		} else if (mod == 1) { // Thanh toan
+			if (money <= 0 || sodu < money) {
+				buffer[0] = 0x02; 
+			} else {
+				sodu -= money;
+				dichvu += 1;
+				buffer[0] = 0x01; 
+			}
+		}
+		apdu.setOutgoingAndSend((short)0, (short)1);
+	}
     
     private void getPublicKey(APDU apdu, short len) {
         byte[] buffer = apdu.getBuffer();
@@ -595,7 +577,6 @@ public class SCard extends Applet
     }
     
     private void update_info(APDU apdu,short len){
-    	
 	    short t1,t2;
 		t1=t2= 0;
 		byte[] buffer = apdu.getBuffer();
