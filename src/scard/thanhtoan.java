@@ -38,11 +38,9 @@ public class thanhtoan extends javax.swing.JFrame {
 
         txt_sotien = new javax.swing.JTextField();
         btn_ThanhToan = new javax.swing.JButton();
-        txt_pin = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -64,19 +62,11 @@ public class thanhtoan extends javax.swing.JFrame {
             }
         });
 
-        txt_pin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_pinActionPerformed(evt);
-            }
-        });
-
         jLabel4.setText("VND");
 
         jLabel5.setText("000");
 
         jLabel2.setText("Nhập số tiền:");
-
-        jLabel3.setText("Nhập mã PIN:");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 204));
 
@@ -88,7 +78,7 @@ public class thanhtoan extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(117, 117, 117)
+                .addGap(126, 126, 126)
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -105,50 +95,42 @@ public class thanhtoan extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txt_pin, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txt_sotien, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)))
-                .addGap(44, 44, 44))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(109, 109, 109)
-                .addComponent(btn_ThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_ThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addComponent(txt_sotien, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addGap(72, 72, 72))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txt_sotien, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txt_pin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(61, 61, 61)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(btn_ThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+                .addGap(26, 26, 26))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_ThanhToanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ThanhToanActionPerformed
-        String pin = Arrays.toString(txt_pin.getPassword());
+        //String pin = Arrays.toString(txt_pin.getPassword());
         String sotien = txt_sotien.getText();
         
         // Kiểm tra số tiền hợp lệ
@@ -175,16 +157,16 @@ public class thanhtoan extends javax.swing.JFrame {
 
             // Tạo chữ ký
             byte[] cmdcreateSig = {(byte) 0xA0, (byte) 0x17, (byte) 0x01, (byte) 0x00};
-            String arraysend = pin.concat(sotien);
+            //String arraysend = pin.concat(sotien);
             //System.out.println("Data to sign (arraysend): " + arraysend);
             //System.out.println("Data to sign (arraysend bytes): " + Arrays.toString(arraysend.getBytes()));
-            thebus.sendAPDUtoApplet(cmdcreateSig, arraysend.getBytes());
+            thebus.sendAPDUtoApplet(cmdcreateSig, sotien.getBytes());
             
             byte[] aa = thebus.resAPDU.getData();
             if (aa.length == 1 || thebus.resAPDU.getSW1() != 0x90) {
-                JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Mã PIN không đúng");
+                JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Lỗi tạo chữ ký số.");
             } else {
-                byte[] input = arraysend.getBytes();
+                byte[] input = sotien.getBytes();
                 
                 try {
                     boolean verifyCheck = Verify_Signature(input, aa);
@@ -204,7 +186,7 @@ public class thanhtoan extends javax.swing.JFrame {
                             byte[] sodu = thebus.resAPDU.getData();
                             int soduValue = ((sodu[0] & 0xFF) << 8) | (sodu[1] & 0xFF);
                             
-                            JOptionPane.showMessageDialog(this, "Giao dịch thành công.\nSố dư hiện tại: " + soduValue*1000 + " VND");
+                            JOptionPane.showMessageDialog(this, "Giao dịch thành công.\nSố dư hiện tại: " + soduValue + ".000" + " VND");
                             setVisible(false);
                         } else if(res[0] == 0x02) {
                             JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số dư không đủ.");
@@ -249,11 +231,7 @@ public class thanhtoan extends javax.swing.JFrame {
         signature.initVerify(key);
         signature.update(input);
         return signature.verify(signatureToVerify);
-    }
-    private void txt_pinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_pinActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_pinActionPerformed
-// private static char[] generateOTP(int length) {
+    }// private static char[] generateOTP(int length) {
 //      String numbers = "1234567890ABCDEFGHJKLMNOUabcdefghjklmnouywYW";
 //      Random random = new Random();
 //      char[] otp = new char[length];
@@ -306,11 +284,9 @@ public class thanhtoan extends javax.swing.JFrame {
     private javax.swing.JButton btn_ThanhToan;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField txt_pin;
     private javax.swing.JTextField txt_sotien;
     // End of variables declaration//GEN-END:variables
 

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package scard;
 
 import java.math.BigInteger;
@@ -12,9 +7,6 @@ import javax.swing.JOptionPane;
 
 public class theBus {
 
-    /**
-     * @param args the command line arguments
-     */
     Card card;
     CardChannel channel;
     CommandAPDU cmndAPDU;

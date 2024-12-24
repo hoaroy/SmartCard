@@ -633,7 +633,7 @@ public class BusForm extends javax.swing.JFrame {
                 switch (check_pin(pin)) {
                     case 0:
                         // Mã PIN sai
-                        pinTryCounter--; // Giam so lần nhập còn lại
+                        pinTryCounter--; // Giam so lan nhap con lai
                         if (pinTryCounter > 0) {
                             JOptionPane.showMessageDialog(null,
                                     "Mã PIN sai. Bạn còn " + pinTryCounter + " lần nhập.");

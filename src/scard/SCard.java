@@ -470,23 +470,28 @@ public class SCard extends Applet
 		byte[] buffer = apdu.getBuffer();
 		byte[] tempPriKey = new byte[(short)(256)];
 		Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
-		Util.arrayCopy(tempBuffer, (short)0, pintemp, (short)0, len);
+		//Util.arrayCopy(tempBuffer, (short)0, pintemp, (short)0, len);
 
-		encrypt_AesCipher(apdu, pintemp, (short)pinlen);
-		if (pin.check(pintemp, (short)0, (byte)pinlen)) {
+		//encrypt_AesCipher(apdu, pintemp, (short)pinlen);
+		//if (pin.check(pintemp, (short)0, (byte)pinlen)) {
+			//Giai ma rsaPriKey
 			decrypt_AesCipher(apdu, rsaPriKey, rsaPriKeyLen, tempPriKey, (short)0);
+			//Tao doi tuong RSAPrivateKey
 			RSAPrivateKey PriKey = (RSAPrivateKey)KeyBuilder.buildKey(KeyBuilder.TYPE_RSA_PRIVATE, KeyBuilder.LENGTH_RSA_1024, false);
 			PriKey.setModulus(tempPriKey, (short)0, (short)(128));
 			PriKey.setExponent(tempPriKey, (short)128, (short)(128));
+			//Khoi tao doi tuong ky so
 			rsaSig.init(PriKey, Signature.MODE_SIGN);
-
+			//Tao chu ky
 			rsaSig.sign(tempBuffer, (short)0, len, sig_buffer, (short)0);
+			//Gui chu ky ve phia client
 			apdu.setOutgoing();
 			apdu.setOutgoingLength((short)sigLen);
 			apdu.sendBytesLong(sig_buffer, (short)0, (short)sigLen);
-		} else {
-			apdu.sendBytesLong(status, (short)0, (short)1); // gui 0
-		}
+		//} else {
+			//apdu.sendBytesLong(status, (short)0, (short)1); // gui 0
+		//}
+		//Don dep bo nho tam
 		JCSystem.requestObjectDeletion();
 	}
 
