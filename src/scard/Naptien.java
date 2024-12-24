@@ -27,10 +27,8 @@ public class Naptien extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         txt_sotien = new javax.swing.JTextField();
         btn_NapTien = new javax.swing.JButton();
-        txt_pin = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -42,19 +40,11 @@ public class Naptien extends javax.swing.JFrame {
 
         jLabel2.setText("Nhập số tiền:");
 
-        jLabel3.setText("Nhập mã PIN:");
-
         btn_NapTien.setBackground(new java.awt.Color(204, 204, 204));
         btn_NapTien.setText("Nạp");
         btn_NapTien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_NapTienActionPerformed(evt);
-            }
-        });
-
-        txt_pin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_pinActionPerformed(evt);
             }
         });
 
@@ -67,7 +57,7 @@ public class Naptien extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setText("Nạp tiền");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 94, 30));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, 94, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -75,26 +65,19 @@ public class Naptien extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(113, 113, 113)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(txt_sotien, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel4))
-                                    .addComponent(txt_pin, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(117, 117, 117)
-                        .addComponent(btn_NapTien, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                        .addGap(89, 89, 89)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btn_NapTien, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_sotien, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,23 +89,16 @@ public class Naptien extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel5)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jLabel3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(txt_pin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(51, 51, 51)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
                 .addComponent(btn_NapTien)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addGap(25, 25, 25))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_NapTienActionPerformed(java.awt.event.ActionEvent evt) {
-        String pin = Arrays.toString(txt_pin.getPassword());
+        //String pin = Arrays.toString(txt_pin.getPassword());
         String sotien = txt_sotien.getText();
         
         // Kiểm tra số tiền hợp lệ
@@ -149,14 +125,14 @@ public class Naptien extends javax.swing.JFrame {
 
             // Tạo chữ ký
             byte[] cmdcreateSig = {(byte) 0xA0, (byte) 0x16, (byte) 0x01, (byte) 0x00};
-            String arraysend = pin.concat(sotien);
-            thebus.sendAPDUtoApplet(cmdcreateSig, arraysend.getBytes());
+            //String arraysend = pin.concat(sotien);
+            thebus.sendAPDUtoApplet(cmdcreateSig, sotien.getBytes());
             byte[] aa = thebus.resAPDU.getData();
 
             if (aa.length == 1 || thebus.resAPDU.getSW1() != 0x90) {
-                JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Mã PIN không đúng");
+                JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Lỗi tạo chữ ký số.");
             } else {
-                byte[] input = arraysend.getBytes();
+                byte[] input = sotien.getBytes();
                 
                 try {
                     boolean verifyCheck = Verify_Signature(input, aa);
@@ -176,7 +152,7 @@ public class Naptien extends javax.swing.JFrame {
                             byte[] sodu = thebus.resAPDU.getData();
                             int soduValue = ((sodu[0] & 0xFF) << 8) | (sodu[1] & 0xFF);
                             
-                            JOptionPane.showMessageDialog(this, "Giao dịch thành công.\nSố dư hiện tại: " + soduValue*1000 + " VND");
+                            JOptionPane.showMessageDialog(this, "Giao dịch thành công.\nSố dư hiện tại: " + soduValue +".000" + " VND");
                             setVisible(false);
                         } else if(res[0] == 0x02) {
                             JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số dư vượt quá giới hạn");
@@ -220,10 +196,6 @@ public class Naptien extends javax.swing.JFrame {
         signature.update(input); 
         return signature.verify(signatureToVerify); //xac minh
     }
-    private void txt_pinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_pinActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_pinActionPerformed
-
    
     
     //private static char[] generateOTP(int length) {
@@ -245,11 +217,9 @@ public class Naptien extends javax.swing.JFrame {
     private javax.swing.JButton btn_NapTien;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPasswordField txt_pin;
     private javax.swing.JTextField txt_sotien;
     // End of variables declaration//GEN-END:variables
 }
