@@ -45,6 +45,7 @@ public class BusForm extends javax.swing.JFrame {
     public Color Azalea = new Color(251, 197, 197);
     private String Thexebus;
     private TheBusDAO theBusDAO;
+    private String CardID = "";
 
     public BusForm() {
         info = new info();
@@ -563,6 +564,7 @@ public class BusForm extends javax.swing.JFrame {
                 byte[] dataRes = thebus.resAPDU.getData();
                 int le = thebus.resAPDU.getNr();
                 setResponseAPDU(dataRes, (short) le);//hien thi du lieu phan hoi tu applet
+                theBusDAO.deleteByID(CardID);
                 txt_sothe.setText("");
                 txt_hoten.setText("");
                 txt_ngaysinh.setText("");
@@ -812,11 +814,12 @@ public class BusForm extends javax.swing.JFrame {
                 int le = thebus.resAPDU.getNr();
                 setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
                 String tach = new String(dataRes);
-                System.out.print("a:" + tach);
+                System.out.print(" response from applet >>>:" + tach);
                 String[] a = tach.split(":");
                 String st = a[0];
                 String ht = a[1];
                 String ns = a[2];
+                CardID = st;
 
                 byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
                 thebus.sendAPDUtoApplet(cmd1);
