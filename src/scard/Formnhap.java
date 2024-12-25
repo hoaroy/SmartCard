@@ -19,11 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 
 public class Formnhap extends javax.swing.JFrame {
+
     private info info;
     private BusForm busForm; // Tham chiếu đến BusForm
 
     private static int counter = 100000; // Bộ đếm bắt đầu từ 100000
-    
+
     public Formnhap(BusForm busForm) {
         info = new info();
         this.busForm = busForm; // Gán tham chiếu
@@ -194,69 +195,68 @@ public class Formnhap extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
-String pin = Arrays.toString(txt_pin.getPassword());
-    String checkpin = Arrays.toString(txt_checkpin.getPassword());
-    if( txt_hoten.getText().equals("") || txt_ns.getDate().equals("")|| txt_pin.getPassword().equals("")|| txt_checkpin.getPassword().equals("")){
-        JOptionPane.showMessageDialog(this, "Tất cả các trường không được để trống!");
-    } else if (pin.length() < 18 || pin.length() > 44) {
-        JOptionPane.showMessageDialog(this, "độ dài PIN từ 6-32 ký tự.");
-    } else if (!pin.equals(checkpin)) {
-        JOptionPane.showMessageDialog(this, "Xác nhận mã pin sai");
-    } else if (txt_ns.getDate().after(new java.util.Date())){
-        JOptionPane.showMessageDialog(this, "Ngày sinh không thể là ngày trong tương lai!");
-    }else {
-        // Sinh mã số thẻ theo logic "CT" + số thứ tự
-        String sothe = "CT" + counter;
-        counter++; // Tăng bộ đếm
-        
-        String hoten = txt_hoten.getText();
-        
-        // Định dạng ngày sinh từ JDateChooser
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-        String ngaysinh = sdf.format(txt_ns.getDate());
-        
-        // Gán thông tin vào đối tượng info
-        info.setSothe(sothe);
-        info.setHoten(hoten);
-        info.setNgaysinh(ngaysinh);
-        info.setPin(pin);
-        // Gán đối tượng info của BusForm
-        busForm.info = this.info;
+        String pin = Arrays.toString(txt_pin.getPassword());
+        String checkpin = Arrays.toString(txt_checkpin.getPassword());
+        if (txt_hoten.getText().equals("") || txt_ns.getDate().equals("") || txt_pin.getPassword().equals("") || txt_checkpin.getPassword().equals("")) {
+            JOptionPane.showMessageDialog(this, "Tất cả các trường không được để trống!");
+        } else if (pin.length() < 18 || pin.length() > 44) {
+            JOptionPane.showMessageDialog(this, "độ dài PIN từ 6-32 ký tự.");
+        } else if (!pin.equals(checkpin)) {
+            JOptionPane.showMessageDialog(this, "Xác nhận mã pin sai");
+        } else if (txt_ns.getDate().after(new java.util.Date())) {
+            JOptionPane.showMessageDialog(this, "Ngày sinh không thể là ngày trong tương lai!");
+        } else {
+            // Sinh mã số thẻ theo logic "CT" + số thứ tự
+            String sothe = "CT" + counter;
+            counter++; // Tăng bộ đếm
 
-        // Gọi phương thức sendData từ BusForm
-        busForm.sendData();
-        JOptionPane.showMessageDialog(null, "Khởi tạo nội dung thẻ thành công.");
-        
-       
-        // Xóa nội dung các trường
-        txt_hoten.setText("");
-        txt_ns.setDate(null);
-        txt_pin.setText("");
-        txt_checkpin.setText("");
-        setVisible(false);
-        
-    }
+            String hoten = txt_hoten.getText();
+
+            // Định dạng ngày sinh từ JDateChooser
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            String ngaysinh = sdf.format(txt_ns.getDate());
+
+            // Gán thông tin vào đối tượng info
+            info.setSothe(sothe);
+            info.setHoten(hoten);
+            info.setNgaysinh(ngaysinh);
+            info.setPin(pin);
+            // Gán đối tượng info của BusForm
+            busForm.info = this.info;
+
+            // Gọi phương thức sendData từ BusForm
+            busForm.sendData();
+            JOptionPane.showMessageDialog(null, "Khởi tạo nội dung thẻ thành công.");
+
+            // Xóa nội dung các trường
+            txt_hoten.setText("");
+            txt_ns.setDate(null);
+            txt_pin.setText("");
+            txt_checkpin.setText("");
+            setVisible(false);
+
+        }
     }//GEN-LAST:event_btn_okActionPerformed
 
     private void Button_getavaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_getavaActionPerformed
         JFileChooser fc = new JFileChooser();
         int returnValue = fc.showOpenDialog(this);
-        if(returnValue == JFileChooser.APPROVE_OPTION){
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile(); //lay tep
             String path = file.getAbsolutePath(); //lay duong dan cua tep
             BufferedImage bimage;
-            try{
+            try {
                 bimage = ImageIO.read(file); //doc tep
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(bimage, "jpg", baos);
                 byte[] img = baos.toByteArray(); // luu vao info
                 //thay doi kich thuoc anh
-                ImageIcon icon= new ImageIcon(bimage.getScaledInstance(anh.getWidth(), anh.getHeight(), Image.SCALE_SMOOTH));
+                ImageIcon icon = new ImageIcon(bimage.getScaledInstance(anh.getWidth(), anh.getHeight(), Image.SCALE_SMOOTH));
                 icon.getImage();
                 anh.setIcon(icon);
                 info.setAvatar(img);
                 //System.out.println("ime:"+img);
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -269,9 +269,7 @@ String pin = Arrays.toString(txt_pin.getPassword());
     private void btn_senddataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_senddataActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_senddataActionPerformed
- 
 
-    
 //    private void set_anh(){
 //        JFileChooser jc = new JFileChooser();
 //        jc.showOpenDialog(null);
@@ -283,7 +281,6 @@ String pin = Arrays.toString(txt_pin.getPassword());
     /**
      * @param args the command line arguments
      */
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Button_getava;
