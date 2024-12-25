@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/db/TheBusDAO.java</file>
             <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/SCard.java</file>
             <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/BusForm.java</file>
@@ -10,6 +11,12 @@
             <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/Formnhap.java</file>
             <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/theBus.java</file>
             <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/updateInfoForm.java</file>
+=======
+            <file>file:/F:/workspace/SmartCard/src/scard/SCard.java</file>
+            <file>file:/F:/workspace/SmartCard/src/scard/BusForm.java</file>
+            <file>file:/F:/workspace/SmartCard/src/scard/updatePIN.java</file>
+            <file>file:/F:/workspace/SmartCard/src/scard/Naptien.java</file>
+>>>>>>> 98a41e5 (ok)
         </group>
     </open-files>
 </project-private>
