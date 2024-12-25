@@ -244,7 +244,7 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         txt_sodu.setText("0");
-        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 50, -1));
+        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 100, -1));
         jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 170, 22));
         jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 140, 170, 22));
         jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, 170, 20));
@@ -653,7 +653,10 @@ public class BusForm extends javax.swing.JFrame {
                         for (int i = 0; i < b.length; i++) {
                             sodu += thebus.byteToHex(b[i]);
                         }   int sd = Integer.valueOf(sodu, 16).intValue() * 1000;
-                        txt_sodu.setText("" + sd);
+                        //txt_sodu.setText("" + sd);
+                        // Định dạng số tiền
+                        String soduFormatted = String.format("%,d", sd).replace(',', '.');
+                        txt_sodu.setText(soduFormatted + " VND");
                         byte [] cmd2 = {(byte) 0xA0, (byte) 0x23, (byte) 0x00, (byte) 0x00};
                         thebus.sendAPDUtoApplet(cmd2);
                         byte[] c = thebus.resAPDU.getData();
