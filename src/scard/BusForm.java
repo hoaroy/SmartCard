@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -812,6 +813,17 @@ public class BusForm extends javax.swing.JFrame {
             for (int i = 0; i < c.length; i++) {
                 dichvu += thebus.byteToHex(c[i]);
             }
+               BigInteger modulus = thebus.getModulusPubkey(); // Lấy modulus
+        BigInteger exponent = thebus.getExponentPubkey();  
+        if (modulus != null && exponent != null) {
+            // Chuyển đổi thành chuỗi hexadecimal và viết hoa
+            String modulusHex = modulus.toString(16).toUpperCase();
+            String exponentHex = exponent.toString(16).toUpperCase();
+            
+            // Nối hai chuỗi lại
+            String publicKeyString = modulusHex + exponentHex;
+            System.out.println("pubKey: "+ publicKeyString);
+        }
             input = true;
         } else {
             JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");

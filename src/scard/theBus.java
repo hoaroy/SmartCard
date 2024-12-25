@@ -89,8 +89,8 @@ public class theBus {
         try {
             factory = TerminalFactory.getDefault();
             terminals = factory.terminals().list();
-            terminal = terminals.get(1);
-            card = terminal.connect("T=1");
+            terminal = terminals.get(0);
+            card = terminal.connect("*");
             channel = card.getBasicChannel();
             resAPDU = channel.transmit(new CommandAPDU((byte) 0xA0, (byte) 0x22, (byte) 0x01, (byte) 0x01));
             
@@ -99,6 +99,7 @@ public class theBus {
             return res;
             
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, e);
         }
         return null;
@@ -108,8 +109,8 @@ public class theBus {
         try {
             factory = TerminalFactory.getDefault();
             terminals = factory.terminals().list();
-            terminal = terminals.get(1);
-            card = terminal.connect("T=1");
+            terminal = terminals.get(0);
+            card = terminal.connect("*");
             channel = card.getBasicChannel();
             resAPDU = channel.transmit(new CommandAPDU((byte) 0xA0, (byte) 0x22, (byte) 0x02, (byte) 0x01));
             
@@ -118,6 +119,8 @@ public class theBus {
             return res;
             
         } catch (Exception e) {
+            e.printStackTrace();
+
             JOptionPane.showMessageDialog(null, e);
         }
         return null;
