@@ -3,20 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/db/TheBusDAO.java</file>
-            <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/SCard.java</file>
-            <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/BusForm.java</file>
-            <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/db/DBConnector.java</file>
-            <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/Formnhap.java</file>
-            <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/theBus.java</file>
-            <file>file:/D:/workspace/The%20Xe%20Bus/SmartCard/src/scard/updateInfoForm.java</file>
-=======
-            <file>file:/F:/workspace/SmartCard/src/scard/SCard.java</file>
-            <file>file:/F:/workspace/SmartCard/src/scard/BusForm.java</file>
-            <file>file:/F:/workspace/SmartCard/src/scard/updatePIN.java</file>
-            <file>file:/F:/workspace/SmartCard/src/scard/Naptien.java</file>
->>>>>>> 98a41e5 (ok)
+            <file>file:/F:/project/src/scard/SCard.java</file>
+            <file>file:/F:/project/src/scard/Naptien.java</file>
+            <file>file:/F:/project/src/scard/theBus.java</file>
+            <file>file:/F:/project/src/scard/info.java</file>
+            <file>file:/F:/project/src/scard/BusForm.java</file>
+            <file>file:/F:/project/src/scard/thanhtoan.java</file>
+            <file>file:/F:/project/src/scard/updateInfoForm.java</file>
+            <file>file:/F:/project/src/scard/Formnhap.java</file>
+            <file>file:/F:/project/src/scard/updatePIN.java</file>
         </group>
     </open-files>
 </project-private>
