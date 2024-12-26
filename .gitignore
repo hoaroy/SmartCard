@@ -3,7 +3,7 @@ build/
 dist/
 
 *.class
-*.jar
+
 *.war
 *.exp
 
