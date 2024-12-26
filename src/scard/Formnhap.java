@@ -184,17 +184,17 @@ public class Formnhap extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_okActionPerformed
-String pin = Arrays.toString(txt_pin.getPassword());
-    String checkpin = Arrays.toString(txt_checkpin.getPassword());
-    if( txt_hoten.getText().equals("") || txt_ns.getDate().equals("")|| txt_pin.getPassword().equals("")|| txt_checkpin.getPassword().equals("")){
-        JOptionPane.showMessageDialog(this, "Tất cả các trường không được để trống!");
-    } else if (pin.length() < 18 || pin.length() > 44) {
-        JOptionPane.showMessageDialog(this, "độ dài PIN từ 6-32 ký tự.");
-    } else if (!pin.equals(checkpin)) {
-        JOptionPane.showMessageDialog(this, "Xác nhận mã pin sai");
-    } else if (txt_ns.getDate().after(new java.util.Date())){
-        JOptionPane.showMessageDialog(this, "Ngày sinh không thể là ngày trong tương lai!");
-    }else {
+        String pin = Arrays.toString(txt_pin.getPassword());
+        String checkpin = Arrays.toString(txt_checkpin.getPassword());
+        if( txt_hoten.getText().equals("") || txt_ns.getDate().equals("")|| txt_pin.getPassword().equals("")|| txt_checkpin.getPassword().equals("")){
+            JOptionPane.showMessageDialog(this, "Tất cả các trường không được để trống!");
+        } else if (pin.length() < 18 || pin.length() > 44) {
+            JOptionPane.showMessageDialog(this, "độ dài PIN từ 6-32 ký tự.");
+        } else if (!pin.equals(checkpin)) {
+            JOptionPane.showMessageDialog(this, "Xác nhận mã pin sai");
+        } else if (txt_ns.getDate().after(new java.util.Date())){
+            JOptionPane.showMessageDialog(this, "Ngày sinh không thể là ngày trong tương lai!");
+        }else {
         // Sinh mã số thẻ theo logic "CT" + số thứ tự
         String sothe = "CT" + counter;
         counter++; // Tăng bộ đếm

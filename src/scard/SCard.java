@@ -352,7 +352,7 @@ public class SCard extends Applet
 	    Util.arrayCopy(buffer , (short)0, pintoKey, (short)0, (short)md5len);
 	    JCSystem.commitTransaction();
 	    JCSystem.requestObjectDeletion();
-	    }
+	}
 	    
 	private void encrypt_AesCipher(APDU apdu, byte[] in, short inlen) {
         try {
