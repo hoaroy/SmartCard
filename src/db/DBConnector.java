@@ -19,7 +19,7 @@ public class DBConnector {
     public static void main(String[] args) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection(CONNECT_URL, "root", "Dangquocan2002");
+            Connection con = DriverManager.getConnection(CONNECT_URL, "root", "");
             System.out.println(con);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DBConnector.class.getName()).log(Level.SEVERE, null, ex);
