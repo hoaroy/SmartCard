@@ -18,7 +18,7 @@ public class TheBusDAO {
 
     public TheBusDAO() {
         try {
-            this.connection = DriverManager.getConnection(DBConnector.CONNECT_URL, "root", "Dangquocan2002");
+            this.connection = DriverManager.getConnection(DBConnector.CONNECT_URL, "root", "");
         } catch (SQLException ex) {
             Logger.getLogger(TheBusDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
