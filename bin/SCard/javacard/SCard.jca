@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Thu Dec 26 20:56:31 ICT 2024
+// on Thu Dec 26 21:47:29 ICT 2024
 
 .package SCard {
 	.aid 0x11:0x22:0x33:0x44:0x55;

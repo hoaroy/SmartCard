@@ -1,4 +1,5 @@
 package scard;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -22,31 +23,37 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import db.TheBusDAO;
+import java.math.BigInteger;
 
 public class BusForm extends javax.swing.JFrame {
+
     private final static byte PIN_trylimit = (byte) 0x03; // So lan nhap pin m
     private int pinTryCounter = PIN_trylimit; // bien luu tru so lan nhap con lai
     private int serviceCount = 0;
     static info info;
     static theBus thebus;
-    private Boolean input= false;
-    private boolean cardready= false;
-    private boolean connected= false;
+    private Boolean input = false;
+    private boolean cardready = false;
+    private boolean connected = false;
     public byte[] rsaPubKey = new byte[128];
-    public Color Azalea = new Color(251,197,197);
+    public Color Azalea = new Color(251, 197, 197);
     private String Thexebus;
-    
+    private TheBusDAO theBusDAO;
+    private String CardID = "";
+
     public BusForm() {
         info = new info();
         thebus = new theBus();
+        theBusDAO = new TheBusDAO();
         initComponents();
     }
-    
+
     //URL urlThexebus = BusForm.class.getResource("Thexebus.jpg");
     //Image img = Toolkit.getDefaultToolkit().createImage(Thexebus);
     //this.setIconImage(img);
-   //hien thi apdu lenh len GUI
-    public void setCommandAPDU(byte[] cmnds, byte lc,byte[] data, byte le) {
+    //hien thi apdu lenh len GUI
+    public void setCommandAPDU(byte[] cmnds, byte lc, byte[] data, byte le) {
         txt_cla.setText(thebus.byteToHex(cmnds[0]));
         txt_ins.setText(thebus.byteToHex(cmnds[1]));
         txt_p1.setText(thebus.byteToHex(cmnds[2]));
@@ -61,12 +68,13 @@ public class BusForm extends javax.swing.JFrame {
         txt_cmd.setText(temp);
         txt_le.setText(thebus.byteToHex(le));
     }
+
     //hien thi apdu phan hoi len
-    public void setResponseAPDU(byte[] datares,short le) {
+    public void setResponseAPDU(byte[] datares, short le) {
         int status1 = thebus.resAPDU.getSW1();
         int status2 = thebus.resAPDU.getSW2();
-        txt_sw1.setText(thebus.shorttoHex((short)status1));
-        txt_sw2.setText(thebus.shorttoHex((short)status2));
+        txt_sw1.setText(thebus.shorttoHex((short) status1));
+        txt_sw2.setText(thebus.shorttoHex((short) status2));
         if (le != 0 && datares.length != 0) {
             //hien thi du lieu ra
             String temp = "";
@@ -239,7 +247,7 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         txt_sodu.setText("0");
-        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 100, -1));
+        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 50, -1));
         jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 170, 22));
         jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 140, 170, 22));
         jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, 170, 20));
@@ -490,65 +498,68 @@ public class BusForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void Button_DisconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_DisconnectActionPerformed
-        if(thebus.disconnectApplet() == true){
-        txt_sothe.setText("");
-        txt_hoten.setText("");
-        txt_ngaysinh.setText("");
-        txt_pin.setText("");
-        txt_sodu.setText("");
-        txt_dichvu.setText("");
-        anhthe.setIcon(null);
-        Button_connect.setText("Kết nối");
-        Button_connect.setBackground(Azalea);
-        Button_Disconnect.setText("Đã ngắt kết nối");
-        Button_Disconnect.setBackground(Color.red);
-        txt_respon.setText("");
-        txt_sw1.setText("");
-        txt_sw2.setText("");
-        txt_cmd.setText("");
-        txt_cla.setText("");
-        txt_ins.setText("");
-        txt_p1.setText("");
-        txt_p2.setText("");
-        txt_lc.setText("");
-        txt_le.setText("");
-        connected = false;
-        cardready = false;
-        }
-        else JOptionPane.showMessageDialog(this, "Ngắt kết nối không thành công.");
+        if (thebus.disconnectApplet() == true) {
+            txt_sothe.setText("");
+            txt_hoten.setText("");
+            txt_ngaysinh.setText("");
+            txt_pin.setText("");
+            txt_sodu.setText("");
+            txt_dichvu.setText("");
+            anhthe.setIcon(null);
+            Button_connect.setText("Kết nối");
+            Button_connect.setBackground(Azalea);
+            Button_Disconnect.setText("Đã ngắt kết nối");
+            Button_Disconnect.setBackground(Color.red);
+            txt_respon.setText("");
+            txt_sw1.setText("");
+            txt_sw2.setText("");
+            txt_cmd.setText("");
+            txt_cla.setText("");
+            txt_ins.setText("");
+            txt_p1.setText("");
+            txt_p2.setText("");
+            txt_lc.setText("");
+            txt_le.setText("");
+            connected = false;
+            cardready = false;
+        } else
+            JOptionPane.showMessageDialog(this, "Ngắt kết nối không thành công.");
     }//GEN-LAST:event_Button_DisconnectActionPerformed
 
     private void Button_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_connectActionPerformed
-        if(thebus.connectApplet() == true){//thiet lap ket noi
-        byte[] cmd = {(byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00};// select
-        //mang data gui di la RID,PIX
-        byte[] data = {(byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x00};
-        byte lc = 6;
-        byte le_expect = 2;
-        setCommandAPDU(cmd, lc, data, le_expect);//hien thi apdu cmd
-        thebus.sendAPDUtoApplet(cmd, data);
-        byte[] dataRes = thebus.resAPDU.getData();
-        int le = thebus.resAPDU.getNr();
-        setResponseAPDU(dataRes, (short)le);//hien thi du lieu phan hoi tu applet
-        Button_connect.setText("Đã kết nối");
-        Button_connect.setBackground(Color.green);
-        Button_Disconnect.setText("Ngắt kết nối");
-        Button_Disconnect.setBackground(Color.red);
-        connected = true;
-        }else JOptionPane.showMessageDialog(this, "Kết nối không thành công. Hãy thử lại.");
+        if (thebus.connectApplet() == true) {//thiet lap ket noi
+            byte[] cmd = {(byte) 0x00, (byte) 0xA4, (byte) 0x04, (byte) 0x00};// select
+            //mang data gui di la RID,PIX
+            byte[] data = {(byte) 0x11, (byte) 0x22, (byte) 0x33, (byte) 0x44, (byte) 0x55, (byte) 0x00};
+            byte lc = 6;
+            byte le_expect = 2;
+            setCommandAPDU(cmd, lc, data, le_expect);//hien thi apdu cmd
+            thebus.sendAPDUtoApplet(cmd, data);
+            byte[] dataRes = thebus.resAPDU.getData();
+            int le = thebus.resAPDU.getNr();
+            setResponseAPDU(dataRes, (short) le);//hien thi du lieu phan hoi tu applet
+            Button_connect.setText("Đã kết nối");
+            Button_connect.setBackground(Color.green);
+            Button_Disconnect.setText("Ngắt kết nối");
+            Button_Disconnect.setBackground(Color.red);
+            connected = true;
+        } else
+            JOptionPane.showMessageDialog(this, "Kết nối không thành công. Hãy thử lại.");
     }//GEN-LAST:event_Button_connectActionPerformed
 
     private void btn_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clearActionPerformed
-        if(connected ==true){
-            if(input == false){ JOptionPane.showMessageDialog(null, "Thẻ chưa có dữ liệu.");
-            }else{
+        if (connected == true) {
+            if (input == false) {
+                JOptionPane.showMessageDialog(null, "Thẻ chưa có dữ liệu.");
+            } else {
                 byte[] cmd = {(byte) 0xA0, (byte) 0x18, (byte) 0x00, (byte) 0x00};
                 byte[] data = {0};
-                setCommandAPDU(cmd,(byte)0, data, (byte)0);//hien thi apdu cmd len GUI
+                setCommandAPDU(cmd, (byte) 0, data, (byte) 0);//hien thi apdu cmd len GUI
                 thebus.sendAPDUtoApplet(cmd);
-                byte[] dataRes= thebus.resAPDU.getData();
-                int le= thebus.resAPDU.getNr();
-                setResponseAPDU(dataRes,(short) le);//hien thi du lieu phan hoi tu applet
+                byte[] dataRes = thebus.resAPDU.getData();
+                int le = thebus.resAPDU.getNr();
+                setResponseAPDU(dataRes, (short) le);//hien thi du lieu phan hoi tu applet
+                theBusDAO.deleteByID(CardID);
                 txt_sothe.setText("");
                 txt_hoten.setText("");
                 txt_ngaysinh.setText("");
@@ -556,21 +567,24 @@ public class BusForm extends javax.swing.JFrame {
                 txt_sodu.setText("");
                 txt_dichvu.setText("");
                 JOptionPane.showMessageDialog(null, "Thẻ đã xóa dữ liệu.");
-                input=false;
-            }   
-            
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+                input = false;
+            }
+
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_clearActionPerformed
 
     private void btn_initActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_initActionPerformed
-        if(connected == true){
+        if (connected == true) {
             if (input == false) {
                 Formnhap initform = new Formnhap(this);
                 initform.setVisible(true);
                 initform.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu");
             }
-            else JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu");
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_initActionPerformed
 
     private void txt_responActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_responActionPerformed
@@ -582,25 +596,27 @@ public class BusForm extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_p2ActionPerformed
 
     private void Button_UnblockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Button_UnblockActionPerformed
-        if(connected==true){
+        if (connected == true) {
             pinTryCounter = PIN_trylimit; // Reset số lần  khi mo khoa thành công
             byte[] cmd = {(byte) 0xA0, (byte) 0x20, (byte) 0x00, (byte) 0x00};
-            byte[] data= {0};
-            setCommandAPDU(cmd,(byte)0, data, (byte)0);//hien thi apdu cmd len GUI
+            byte[] data = {0};
+            setCommandAPDU(cmd, (byte) 0, data, (byte) 0);//hien thi apdu cmd len GUI
             thebus.sendAPDUtoApplet(cmd);
-            byte[] dataRes= thebus.resAPDU.getData();
-            int le= thebus.resAPDU.getNr();
-            setResponseAPDU(dataRes,(short) le);//hien thi du lieu phan hoi tu applet
+            byte[] dataRes = thebus.resAPDU.getData();
+            int le = thebus.resAPDU.getNr();
+            setResponseAPDU(dataRes, (short) le);//hien thi du lieu phan hoi tu applet
             JOptionPane.showMessageDialog(null, "Thẻ đã được mở khóa.");
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_Button_UnblockActionPerformed
 
     private void bnt_naptienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bnt_naptienActionPerformed
-        if(connected ==true && cardready == true){
-                Naptien naptien = new Naptien();
-                naptien.setVisible(true);
-                naptien.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+        if (connected == true && cardready == true) {
+            Naptien naptien = new Naptien();
+            naptien.setVisible(true);
+            naptien.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_bnt_naptienActionPerformed
 
     private void Btn_XemttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_XemttActionPerformed
@@ -612,14 +628,15 @@ public class BusForm extends javax.swing.JFrame {
                 switch (check_pin(pin)) {
                     case 0:
                         // Mã PIN sai
-                        pinTryCounter--; // Giam so lan nhap con lai
+                        pinTryCounter--; // Giam so lần nhập còn lại
                         if (pinTryCounter > 0) {
                             JOptionPane.showMessageDialog(null,
                                     "Mã PIN sai. Bạn còn " + pinTryCounter + " lần nhập.");
                         } else {
                             JOptionPane.showMessageDialog(null,
                                     "Bạn đã nhập sai quá số lần cho phép. Thẻ đã bị khóa!");
-                        }   break;
+                        }
+                        break;
                     case 1:
                         // Mã PIN đúng
                         JOptionPane.showMessageDialog(null, "Connect thẻ thành công.");
@@ -635,6 +652,7 @@ public class BusForm extends javax.swing.JFrame {
                         setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
                         String tach = new String(dataRes);
                         String[] a = tach.split(":");
+                        
                         String st = a[0];
                         String ht = a[1];
                         String ns = a[2];
@@ -647,18 +665,20 @@ public class BusForm extends javax.swing.JFrame {
                         String sodu = "";
                         for (int i = 0; i < b.length; i++) {
                             sodu += thebus.byteToHex(b[i]);
-                        }   int sd = Integer.valueOf(sodu, 16).intValue() * 1000;
-                        //txt_sodu.setText("" + sd);
+                        }
+                        int sd = Integer.valueOf(sodu, 16).intValue() * 1000;
+//                        txt_sodu.setText("" + sd);
                         // Định dạng số tiền
                         String soduFormatted = String.format("%,d", sd).replace(',', '.');
                         txt_sodu.setText(soduFormatted + " VND");
-                        byte [] cmd2 = {(byte) 0xA0, (byte) 0x23, (byte) 0x00, (byte) 0x00};
+                        byte[] cmd2 = {(byte) 0xA0, (byte) 0x23, (byte) 0x00, (byte) 0x00};
                         thebus.sendAPDUtoApplet(cmd2);
                         byte[] c = thebus.resAPDU.getData();
                         String dichvu = "";
                         for (int i = 0; i < c.length; i++) {
                             dichvu += thebus.byteToHex(c[i]);
-                        }   int dv = Integer.valueOf(dichvu, 16).intValue();
+                        }
+                        int dv = Integer.valueOf(dichvu, 16).intValue();
                         txt_dichvu.setText("" + dv);
                         break;
                     default:
@@ -670,7 +690,7 @@ public class BusForm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
             }
         }
-    
+
     }//GEN-LAST:event_Btn_XemttActionPerformed
 
     private void txt_pinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_pinActionPerformed
@@ -678,53 +698,57 @@ public class BusForm extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_pinActionPerformed
 
     private void btn_capnhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capnhatActionPerformed
-       if(connected == true && cardready == true){
-                updateInfoForm updateinfo= new updateInfoForm(txt_sothe.getText(), txt_hoten.getText(),txt_ngaysinh.getText());
-                updateinfo.setVisible(true);
-                updateinfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+        if (connected == true && cardready == true) {
+            updateInfoForm updateinfo = new updateInfoForm(txt_sothe.getText(), txt_hoten.getText(), txt_ngaysinh.getText());
+            updateinfo.setVisible(true);
+            updateinfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_capnhatActionPerformed
 
     private void btn_changePINActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_changePINActionPerformed
-         if(connected == true && cardready == true){
-                updatePIN updatepin= new updatePIN();
-                updatepin.setVisible(true);
-                updatepin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+        if (connected == true && cardready == true) {
+            updatePIN updatepin = new updatePIN();
+            updatepin.setVisible(true);
+            updatepin.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_changePINActionPerformed
 
     private void Btn_thayanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Btn_thayanhActionPerformed
-        if(connected == true && cardready == true){
-        JFileChooser fc = new JFileChooser();
-        int returnValue = fc.showOpenDialog(this);
-        if(returnValue == JFileChooser.APPROVE_OPTION){
-            File file = fc.getSelectedFile();
-            BufferedImage bimage;
-            try{
-                bimage = ImageIO.read(file);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(bimage, "jpg", baos);
-                byte[] img = baos.toByteArray();
-                setImage(img);
-                getImage(img);
-                info.setAvatar(img);
-                JOptionPane.showMessageDialog(this, "Thay ảnh thành công.");
-            }catch(IOException e){
-                e.printStackTrace();
+        if (connected == true && cardready == true) {
+            JFileChooser fc = new JFileChooser();
+            int returnValue = fc.showOpenDialog(this);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                BufferedImage bimage;
+                try {
+                    bimage = ImageIO.read(file);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ImageIO.write(bimage, "jpg", baos);
+                    byte[] img = baos.toByteArray();
+                    setImage(img);
+                    getImage(img);
+                    info.setAvatar(img);
+                    JOptionPane.showMessageDialog(this, "Thay ảnh thành công.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ.");
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ.");
     }//GEN-LAST:event_Btn_thayanhActionPerformed
 
     private void btn_thanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_thanhtoanActionPerformed
-        if(connected == true && cardready == true){
-                thanhtoan pay= new thanhtoan();
-                pay.setParent(this);
-                pay.setVisible(true);
-                pay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        }else JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
+        if (connected == true && cardready == true) {
+            thanhtoan pay = new thanhtoan();
+            pay.setParent(this);
+            pay.setVisible(true);
+            pay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        } else
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }//GEN-LAST:event_btn_thanhtoanActionPerformed
-   
+
     //public void updateServiceCount() {
     //    int currentCount = Integer.parseInt(txt_dichvu.getText());
     //    currentCount++; // Tăng số lần sử dụng dịch vụ
@@ -763,109 +787,123 @@ public class BusForm extends javax.swing.JFrame {
             public void run() {
                 new BusForm().setVisible(true);
             }
-            
+
         });
     }
-    
-    
-    public  void sendData() {
-    if (connected == true ) {
-        if (!input) {
-            setImage(info.getAvatar());
-            getImage(info.getAvatar());
-            // Chuyển dữ liệu xuống applet
-            String sothe = info.getSothe();
-            String hoten = info.getHoten();
-            String ngaysinh = info.getNgaysinh();
-            String pin = info.getPin();
-            String arraysend = sothe.concat(".").concat(hoten).concat(".").concat(ngaysinh).concat(".").concat(pin);
-            System.out.println("send:" + arraysend);
-            int lc = arraysend.length();
-            byte datalen = (byte) lc; // Độ dài dữ liệu gửi vào applet
-            byte[] cmd = {(byte) 0xA0, (byte) 0x10, (byte) 0x00, (byte) 0x00};
-            byte[] data = arraysend.getBytes();
-            setCommandAPDU(cmd, (byte) lc, data, (byte) 0);
-            thebus.sendAPDUtoApplet(cmd, data);
-            byte[] dataRes = thebus.resAPDU.getData();
-            int le = thebus.resAPDU.getNr();
-            setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
-            String tach = new String(dataRes);
-            System.out.print("a:" + tach);
-            String[] a = tach.split(":");
-            String st = a[0];
-            String ht = a[1];
-            String ns = a[2];
 
-            byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
-            thebus.sendAPDUtoApplet(cmd1);
-            byte[] b = thebus.resAPDU.getData();
-            String sodu = "";
-            for (int i = 0; i < b.length; i++) {
-                sodu += thebus.byteToHex(b[i]);
+    public void sendData() {
+        if (connected == true) {
+            if (!input) {
+                setImage(info.getAvatar());
+                getImage(info.getAvatar());
+                // Chuyển dữ liệu xuống applet
+                String sothe = info.getSothe();
+                String hoten = info.getHoten();
+                String ngaysinh = info.getNgaysinh();
+                String pin = info.getPin();
+                String arraysend = sothe.concat(".").concat(hoten).concat(".").concat(ngaysinh).concat(".").concat(pin);
+                System.out.println("send:" + arraysend);
+                int lc = arraysend.length();
+                byte datalen = (byte) lc; // Độ dài dữ liệu gửi vào applet
+                byte[] cmd = {(byte) 0xA0, (byte) 0x10, (byte) 0x00, (byte) 0x00};
+                byte[] data = arraysend.getBytes();
+                setCommandAPDU(cmd, (byte) lc, data, (byte) 0);
+                thebus.sendAPDUtoApplet(cmd, data);
+                byte[] dataRes = thebus.resAPDU.getData();
+                int le = thebus.resAPDU.getNr();
+                setResponseAPDU(dataRes, (byte) le); // Hiển thị dữ liệu phản hồi từ applet
+                String tach = new String(dataRes);
+                System.out.print(" response from applet >>>:" + tach);
+                String[] a = tach.split(":");
+                String st = a[0];
+                String ht = a[1];
+                String ns = a[2];
+                CardID = st;
+
+                byte[] cmd1 = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
+                thebus.sendAPDUtoApplet(cmd1);
+                byte[] b = thebus.resAPDU.getData();
+                String sodu = "";
+                for (int i = 0; i < b.length; i++) {
+                    sodu += thebus.byteToHex(b[i]);
+                }
+                byte[] cmd2 = {(byte) 0xA0, (byte) 0x23, (byte) 0x00, (byte) 0x00};
+                thebus.sendAPDUtoApplet(cmd2);
+                byte[] c = thebus.resAPDU.getData();
+                String dichvu = "";
+                for (int i = 0; i < c.length; i++) {
+                    dichvu += thebus.byteToHex(c[i]);
+                }
+                BigInteger modulus = thebus.getModulusPubkey(); // Lấy modulus
+                BigInteger exponent = thebus.getExponentPubkey();
+                if (modulus != null && exponent != null) {
+                    String modulusHex = modulus.toString(16).toUpperCase();
+                    String exponentHex = exponent.toString(16).toUpperCase();
+
+                    String publicKeyString = modulusHex + exponentHex;
+                    theBusDAO.addToDB(st, publicKeyString);
+                }
+                input = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");
             }
-            byte[] cmd2 = {(byte) 0xA0, (byte) 0x23, (byte) 0x00, (byte) 0x00};
-            thebus.sendAPDUtoApplet(cmd2);
-            byte[] c = thebus.resAPDU.getData();
-            String dichvu = "";
-            for (int i = 0; i < c.length; i++) {
-                dichvu += thebus.byteToHex(c[i]);
-            }
-            input = true;
         } else {
-            JOptionPane.showMessageDialog(null, "Thẻ đã có dữ liệu.");
+            JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
         }
-    } else {
-        JOptionPane.showMessageDialog(null, "Chưa connect thẻ");
     }
-}
 
-    private void setImage(byte [] img){
-        if(img == null) return;
+    private void setImage(byte[] img) {
+        if (img == null) {
+            return;
+        }
         byte[] cmd = {(byte) 0xA0, (byte) 0x12, (byte) 0x01, (byte) 0x00};
         thebus.sendAPDUtoApplet(cmd);
         int sendlen = img.length;
-        System.out.println("ảnh gửi:" +img);
+        System.out.println("ảnh gửi:" + img);
         byte[] cmnd = {(byte) 0xA0, (byte) 0x12, (byte) 0x02, (byte) 0x00};
         int pointer = 0;
         byte[] temp = new byte[255];
         int datalen = 255;
-        while(sendlen >0){
+        while (sendlen > 0) {
             System.arraycopy(img, pointer, temp, 0, datalen);
             thebus.sendAPDUtoApplet(cmnd, temp);
             pointer += 255;
-            sendlen -=255;
-            if(sendlen <255){
+            sendlen -= 255;
+            if (sendlen < 255) {
                 datalen = sendlen;
             }
         }
     }
-    private void getImage(byte [] img){
-        if(img == null) return;
-        try {
-        byte[] cmd = {(byte) 0xA0, (byte) 0x13, (byte) 0x01, (byte) 0x00};
-        thebus.sendAPDUtoApplet(cmd);
-        int sendlen = img.length;
-        byte[] cmnd = {(byte) 0xA0, (byte) 0x13, (byte) 0x02, (byte) 0x00};
-        byte[] resimg= new byte[sendlen];
-        int pointer=0;
-        int datalen = 255;
-        while(sendlen >0){
-            thebus.sendAPDUtoApplet(cmnd);
-            byte[] temp = thebus.resAPDU.getData();
-            System.arraycopy(temp, 0, resimg, pointer, datalen);
-            pointer += 255;
-            sendlen -= 255;
-            if(sendlen<255){
-                datalen = sendlen;
-            }
+
+    private void getImage(byte[] img) {
+        if (img == null) {
+            return;
         }
-        System.out.println("ảnh res:" +resimg);
-        ByteArrayInputStream bais= new ByteArrayInputStream(resimg);
-        BufferedImage b;
-        b = ImageIO.read(bais);
-        ImageIcon icon= new ImageIcon(b.getScaledInstance(anhthe.getWidth(),anhthe.getHeight(), Image.SCALE_SMOOTH));
-        icon.getImage();
-        anhthe.setIcon(icon);
+        try {
+            byte[] cmd = {(byte) 0xA0, (byte) 0x13, (byte) 0x01, (byte) 0x00};
+            thebus.sendAPDUtoApplet(cmd);
+            int sendlen = img.length;
+            byte[] cmnd = {(byte) 0xA0, (byte) 0x13, (byte) 0x02, (byte) 0x00};
+            byte[] resimg = new byte[sendlen];
+            int pointer = 0;
+            int datalen = 255;
+            while (sendlen > 0) {
+                thebus.sendAPDUtoApplet(cmnd);
+                byte[] temp = thebus.resAPDU.getData();
+                System.arraycopy(temp, 0, resimg, pointer, datalen);
+                pointer += 255;
+                sendlen -= 255;
+                if (sendlen < 255) {
+                    datalen = sendlen;
+                }
+            }
+            System.out.println("ảnh res:" + resimg);
+            ByteArrayInputStream bais = new ByteArrayInputStream(resimg);
+            BufferedImage b;
+            b = ImageIO.read(bais);
+            ImageIcon icon = new ImageIcon(b.getScaledInstance(anhthe.getWidth(), anhthe.getHeight(), Image.SCALE_SMOOTH));
+            icon.getImage();
+            anhthe.setIcon(icon);
         } catch (IOException ex) {
             Logger.getLogger(BusForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -878,22 +916,25 @@ public class BusForm extends javax.swing.JFrame {
 //        }catch (Exception e){
 //            e.printStackTrace();
 //        }
+
     public int check_pin(String pin) {
         short lc = (short) pin.length(); //do dai du lieu gui vao applet
         short le = 1;//du lieu nhan mong doi (Le)
         byte[] cmd = {(byte) 0xA0, (byte) 0x19, (byte) 0x00, (byte) 0x00};
         byte[] data = pin.getBytes();
-        setCommandAPDU(cmd, (byte)lc, data,(byte)le);
+        setCommandAPDU(cmd, (byte) lc, data, (byte) le);
         thebus.sendAPDUtoApplet(cmd, data);
         byte[] dataRes = thebus.resAPDU.getData();
-        int lenRes= thebus.resAPDU.getNr() ;
-        setResponseAPDU(dataRes, (byte)lenRes);
+        int lenRes = thebus.resAPDU.getNr();
+        setResponseAPDU(dataRes, (byte) lenRes);
         //String a = new String(dataRes);
-        if (dataRes[0] == (byte)0x01) {//đúng mã PIN
+        if (dataRes[0] == (byte) 0x01) {//đúng mã PIN
             return 1;
-        } else if(dataRes[0] == (byte)0x00){
+        } else if (dataRes[0] == (byte) 0x00) {
             return 0;
-        }else return 2;
+        } else {
+            return 2;
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
