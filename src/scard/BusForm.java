@@ -571,6 +571,7 @@ public class BusForm extends javax.swing.JFrame {
                 txt_pin.setText("");
                 txt_sodu.setText("");
                 txt_dichvu.setText("");
+                anhthe.setIcon(null);
                 JOptionPane.showMessageDialog(null, "Thẻ đã xóa dữ liệu.");
                 input = false;
             }
@@ -800,7 +801,7 @@ public class BusForm extends javax.swing.JFrame {
         if (connected == true) {
             if (!input) {
                 setImage(info.getAvatar());
-                getImage(info.getAvatar());
+//                getImage(info.getAvatar());
                 // Chuyển dữ liệu xuống applet
                 String sothe = info.getSothe();
                 String hoten = info.getHoten();
@@ -913,14 +914,7 @@ public class BusForm extends javax.swing.JFrame {
             Logger.getLogger(BusForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//        try{
-//            b = ImageIO.read(bais);
-//            ImageIcon icon= new ImageIcon(b);
-//            icon.getImage();
-//            anhthe.setIcon(icon);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
+
 
     public int check_pin(String pin) {
         short lc = (short) pin.length(); //do dai du lieu gui vao applet
