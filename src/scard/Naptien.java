@@ -14,9 +14,10 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Naptien extends javax.swing.JFrame {
+
     private theBus thebus;
-    BigInteger modulusPubkey,exponentPubkey ;
-     
+    BigInteger modulusPubkey, exponentPubkey;
+
     public Naptien() {
         this.thebus = BusForm.thebus;
         initComponents();
@@ -101,7 +102,7 @@ public class Naptien extends javax.swing.JFrame {
     private void btn_NapTienActionPerformed(java.awt.event.ActionEvent evt) {
         //String pin = Arrays.toString(txt_pin.getPassword());
         String sotien = txt_sotien.getText();
-        
+
         // Kiểm tra số tiền hợp lệ
         try {
             int money = Integer.parseInt(sotien);
@@ -109,16 +110,16 @@ public class Naptien extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Số tiền phải lớn hơn 0");
                 return;
             }
-            
+
             // Chuyển số tiền thành byte array
             byte[] moneyBytes;
-            if(money <= 255) {
+            if (money <= 255) {
                 moneyBytes = new byte[1];
-                moneyBytes[0] = (byte)money;
-            } else if(money <= 65535) {
+                moneyBytes[0] = (byte) money;
+            } else if (money <= 65535) {
                 moneyBytes = new byte[2];
-                moneyBytes[0] = (byte)(money >> 8);
-                moneyBytes[1] = (byte)(money & 0xFF);
+                moneyBytes[0] = (byte) (money >> 8);
+                moneyBytes[1] = (byte) (money & 0xFF);
             } else {
                 JOptionPane.showMessageDialog(this, "Số tiền quá lớn");
                 return;
@@ -134,28 +135,28 @@ public class Naptien extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Lỗi tạo chữ ký số.");
             } else {
                 byte[] input = sotien.getBytes();
-                
+
                 try {
                     boolean verifyCheck = Verify_Signature(input, aa);
-                    
+
                     if (verifyCheck) {
                         // Gửi lệnh cập nhật số dư với số tiền đã được chuyển đổi đúng
                         byte[] cmdverify = {(byte) 0xA0, (byte) 0x16, (byte) 0x02, (byte) 0x00};
                         thebus.sendAPDUtoApplet(cmdverify, moneyBytes);
                         byte[] res = thebus.resAPDU.getData();
-                        
-                        if(res[0] == 0x00) {
+
+                        if (res[0] == 0x00) {
                             JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Đã có lỗi xảy ra");
-                        } else if(res[0] == 0x01) {
+                        } else if (res[0] == 0x01) {
                             // Lấy số dư sau khi nạp thành công
                             byte[] cmdGetSodu = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
                             thebus.sendAPDUtoApplet(cmdGetSodu);
                             byte[] sodu = thebus.resAPDU.getData();
                             int soduValue = ((sodu[0] & 0xFF) << 8) | (sodu[1] & 0xFF);
-                            
-                            JOptionPane.showMessageDialog(this, "Giao dịch thành công.\nSố dư hiện tại: " + soduValue +".000" + " VND");
+
+                            JOptionPane.showMessageDialog(this, "Giao dịch thành công.\nSố dư hiện tại: " + soduValue + ".000" + " VND");
                             setVisible(false);
-                        } else if(res[0] == 0x02) {
+                        } else if (res[0] == 0x02) {
                             JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số dư vượt quá giới hạn");
                         }
                     } else {
@@ -173,34 +174,39 @@ public class Naptien extends javax.swing.JFrame {
     }
 
     //RSA
-    public boolean Verify_Signature(byte[] input,byte[] signatureToVerify) throws Exception{
+    public boolean Verify_Signature(byte[] input, byte[] signatureToVerify) throws Exception {
         if (signatureToVerify.length != 128) {
             throw new SignatureException("Chu ky khong hop le, do dai chu ky phai la 128 byte.");
         }
-         byte[] getModulusPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x01, (byte) 0x01};
-          thebus.sendAPDUtoApplet(getModulusPubkey);
-          BigInteger resModulusPubkey = new BigInteger(1, thebus.resAPDU.getData());
-          byte[] getExponentPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x02, (byte) 0x01};
-          thebus.sendAPDUtoApplet(getExponentPubkey);
-          BigInteger resExponentPubkey = new BigInteger(1, thebus.resAPDU.getData());
-          
+        byte[] getModulusPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x01, (byte) 0x01};
+        thebus.sendAPDUtoApplet(getModulusPubkey);
+        BigInteger resModulusPubkey = new BigInteger(1, thebus.resAPDU.getData());
+        byte[] getExponentPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x02, (byte) 0x01};
+        thebus.sendAPDUtoApplet(getExponentPubkey);
+        BigInteger resExponentPubkey = new BigInteger(1, thebus.resAPDU.getData());
+
+        // In thông tin khóa
+        System.out.println("RSA Key Components:");
+        System.out.println("Modulus (n) = " + resModulusPubkey.toString());
+        System.out.println("Public Exponent (e) = " + resExponentPubkey.toString());
+        System.out.println("Modulus length: " + resModulusPubkey.bitLength() + " bits");
+
         modulusPubkey = resModulusPubkey;
         exponentPubkey = resExponentPubkey;
-        System.out.println("pubkey: "+modulusPubkey + " / "+exponentPubkey );
-       
+        System.out.println("pubkey: " + modulusPubkey + " / " + exponentPubkey);  // dóng gói pubkey
+
         KeyFactory keyFactory = KeyFactory.getInstance("RSA"); //sd RSA de tao key
-        RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(modulusPubkey, exponentPubkey); //chua cac thanh phan cua pubKey
-        PublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec); //tap key
-        
+        RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(modulusPubkey, exponentPubkey); //n và e  cua pubKey
+        PublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec); //tao key
+
         Signature signature = Signature.getInstance("MD5withRSA"); //sd MD5 bam DL + RSA
         signature.initVerify(key); // sd pubKey
-        signature.update(input); 
+        signature.update(input);
         return signature.verify(signatureToVerify); //xac minh
     }
-   
-    
+
     //private static char[] generateOTP(int length) {
-   //  String numbers = "158AB90HJNO234Uab67cdCDefghjKLouMklmEFGnywYW";
+    //  String numbers = "158AB90HJNO234Uab67cdCDefghjKLouMklmEFGnywYW";
     //  Random random = new Random();
 //      char[] otp = new char[length];
 //
@@ -212,7 +218,6 @@ public class Naptien extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_NapTien;
