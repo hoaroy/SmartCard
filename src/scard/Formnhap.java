@@ -17,7 +17,7 @@ public class Formnhap extends javax.swing.JFrame {
     private info info;
     private BusForm busForm; // Tham chiếu đến BusForm
 
-    private static int counter = 100023; // Bộ đếm bắt đầu từ 100023
+    private static int counter = 1; // Bộ đếm bắt đầu từ 1
     
     public Formnhap(BusForm busForm) {
         info = new info();
@@ -195,9 +195,12 @@ public class Formnhap extends javax.swing.JFrame {
         } else if (txt_ns.getDate().after(new java.util.Date())){
             JOptionPane.showMessageDialog(this, "Ngày sinh không thể là ngày trong tương lai!");
         }else {
-        // Sinh mã số thẻ theo logic "CT" + số thứ tự
-        String sothe = "CT" + counter;
-        counter++; // Tăng bộ đếm
+        // Lấy giá trị ngày sinh từ JDateChooser và định dạng chỉ lấy ngày và tháng
+        java.text.SimpleDateFormat sdfDayMonth = new java.text.SimpleDateFormat("ddMM");
+        String dayMonth = sdfDayMonth.format(txt_ns.getDate());
+        String formattedCounter = String.format("%02d", counter);
+        String sothe = "CT" + dayMonth + formattedCounter;
+        counter++; 
         
         String hoten = txt_hoten.getText();
         
@@ -216,14 +219,12 @@ public class Formnhap extends javax.swing.JFrame {
         // Gọi phương thức sendData từ BusForm
         busForm.sendData();
         JOptionPane.showMessageDialog(null, "Khởi tạo nội dung thẻ thành công.");
-        
-       
+        setVisible(false);
         // Xóa nội dung các trường
         txt_hoten.setText("");
         txt_ns.setDate(null);
         txt_pin.setText("");
         txt_checkpin.setText("");
-        setVisible(false);
         
     }
     }//GEN-LAST:event_btn_okActionPerformed

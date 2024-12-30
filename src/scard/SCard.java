@@ -170,7 +170,7 @@ public class SCard extends Applet
 		byte[] buffer = apdu.getBuffer();
 		Util.arrayCopy(buffer, ISO7816.OFFSET_CDATA, tempBuffer, (short)0, len);
 		for(short i=0; i<len ; i++){
-			if(tempBuffer[i] == (byte) 0x2e){
+			if(tempBuffer[i] == (byte) 0x2e){ //.
 				if(t1 ==0){
 					t1 = i;
 					sothelen = (short)t1;
@@ -256,9 +256,17 @@ public class SCard extends Applet
         Util.arrayFillNonAtomic(rsaPubKey, (short) 0, (short)(2*128), (byte) 0);
         Util.arrayFillNonAtomic(sig_buffer, (short) 0, (short)(128), (byte) 0);
     }
+    
     private void set_img(APDU apdu, short len){
     	byte[] buf = apdu.getBuffer();
 		short offData = apdu.getOffsetCdata();
+		
+		//Tao mang tam de luu DL da ma hoa
+		//byte[] encryptedData = JCSystem.makeTransientByteArray((short) (len + 16), JCSystem.CLEAR_ON_DESELECT);
+		// Ma hoa du lieu tu APDU buffer
+		//encrypt_AesCipher(apdu, buf, len);
+    
+		//Luu DL da ma hoa 
         if((short)(MAX_LENGTH-imagelen3)<255){
 	        Util.arrayCopy(buf, offData, image4, imagelen4, len);
 	        imagelen4 += len;
@@ -274,13 +282,18 @@ public class SCard extends Applet
 					Util.arrayCopy(buf, offData, image1, imagelen1, len);
 					imagelen1 += len;
 				}
-           	 }
-           }
-	    }
+           	}
+        }
+	}
 	    
     private void get_img(APDU apdu){
     	byte[] buf = apdu.getBuffer();
 		short datalen = 255;
+		
+		// Tao mang tam de luu du lieu da giai ma
+		//byte[] decryptedData = JCSystem.makeTransientByteArray((short) (datalen + 16), JCSystem.CLEAR_ON_DESELECT);
+        
+        //Lay du lieu tu vung nho phu hop, giai ma, gui 
         if(lenback3==0){
         	if(lenback4 <255){
 	        	datalen = lenback4;
@@ -288,6 +301,12 @@ public class SCard extends Applet
 	        apdu.setOutgoing();
 			apdu.setOutgoingLength((short)255);
 			Util.arrayCopy(image4, (pointer4), buf, (short)0, datalen);
+			//Giai ma DL
+			//decrypt_AesCipher(apdu, buf, datalen, decryptedData, (short) 0);
+			//Gui DL da giai ma
+			//apdu.setOutgoing();
+			//apdu.setOutgoingLength(datalen);
+			//apdu.sendBytesLong(decryptedData, (short) 0, datalen);
 			apdu.sendBytes((short)0, datalen);
 			pointer4+=  (short)255;
 			lenback4 -= (short)(255);
@@ -299,6 +318,12 @@ public class SCard extends Applet
 				apdu.setOutgoing();
 				apdu.setOutgoingLength((short)255);
 				Util.arrayCopy(image3, (pointer3), buf, (short)0, datalen);
+				//Giai ma DL
+				//decrypt_AesCipher(apdu, buf, datalen, decryptedData, (short) 0);
+				//Gui DL da giai ma
+				//apdu.setOutgoing();
+				//apdu.setOutgoingLength(datalen);
+				//apdu.sendBytesLong(decryptedData, (short) 0, datalen);
 				apdu.sendBytes((short)0, datalen);
 				pointer3+=  (short)255;
 				lenback3 -= (short)(255);
@@ -310,6 +335,12 @@ public class SCard extends Applet
 					apdu.setOutgoing();
 					apdu.setOutgoingLength((short)255);
 					Util.arrayCopy(image2, (pointer2), buf, (short)0, datalen);
+					//Giai ma DL
+					//decrypt_AesCipher(apdu, buf, datalen, decryptedData, (short) 0);
+					//Gui DL da giai ma
+					//apdu.setOutgoing();
+					//apdu.setOutgoingLength(datalen);
+					//apdu.sendBytesLong(decryptedData, (short) 0, datalen);
 					apdu.sendBytes((short)0, datalen);
 					pointer2+=  (short)255;
 					lenback2 -= (short)(255);
@@ -320,6 +351,12 @@ public class SCard extends Applet
 					apdu.setOutgoing();
 					apdu.setOutgoingLength((short)255);
 					Util.arrayCopy(image1, (pointer1), buf, (short)0, datalen);
+					//Giai ma DL
+					//decrypt_AesCipher(apdu, buf, datalen, decryptedData, (short) 0);
+					//Gui DL da giai ma
+					//apdu.setOutgoing();
+					//apdu.setOutgoingLength(datalen);
+					//apdu.sendBytesLong(decryptedData, (short) 0, datalen);
 					apdu.sendBytes((short)0, datalen);
 					pointer1+=  (short)255;
 					lenback1 -= (short)(255);
@@ -327,7 +364,7 @@ public class SCard extends Applet
 				}
         	}
 	    }
-	    
+
     private void check_pin(APDU apdu, short len) {
         byte[] buffer = apdu.getBuffer();
         apdu.setOutgoing();
@@ -413,8 +450,15 @@ public class SCard extends Applet
 		}else if (inlen <16){
 			aescipher.init(aesKey, mod);
 			aescipher.doFinal(in, (short) 0, (short)16, buffer, (short)0);
-			Util.arrayCopy(buffer, (short)0, out, (short)offset, (short)inlen);
-		}else{
+			// Loai bo padding (PKCS#7)
+			byte paddingLength = buffer[(short) (inlen - 1)];
+			short dataLength = inlen;
+			if (paddingLength > 0 && paddingLength <= 16) {
+				dataLength -= paddingLength;
+			}
+			Util.arrayCopy(buffer, (short) 0, out, (short) offset, dataLength);
+			//Util.arrayCopy(buffer, (short)0, out, (short)offset, (short)inlen);
+		}else{ //inlen > 16 va (inlen%16)!=0
 			count=0;
 			for(short i=1; i<=inlen; i++){
 				if(i % 16 == 0 ){
@@ -423,8 +467,15 @@ public class SCard extends Applet
 					aescipher.doFinal(in,(short)(i-16),(short)16,buffer,(short)(i-16));
 				}
 			}
+			//Giai ma khoi cuoi
 			aescipher.init(aesKey, mod);
 			aescipher.doFinal(in, (short)(16*count), (short)16, buffer, (short)(16*count));
+			//Loai bo padding
+			byte paddingLength = buffer[(short) (inlen - 1)];
+			short dataLength = inlen;
+			if (paddingLength > 0 && paddingLength <= 16) {
+				dataLength -= paddingLength; // Loai bo padding
+			}
 			Util.arrayCopy(buffer, (short)0, out, (short)offset, (short)(inlen));
 		}
 		JCSystem.requestObjectDeletion();	
