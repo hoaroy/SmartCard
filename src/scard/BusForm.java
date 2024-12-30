@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package scard;
 
 import java.awt.Color;
@@ -33,7 +28,7 @@ import java.math.BigInteger;
 
 public class BusForm extends javax.swing.JFrame {
 
-    private final static byte PIN_trylimit = (byte) 0x03; // So lan nhap pin m
+    private final static byte PIN_trylimit = (byte) 0x03; // So lan nhap pin max
     private int pinTryCounter = PIN_trylimit; // bien luu tru so lan nhap con lai
     private int serviceCount = 0;
     static info info;
@@ -46,6 +41,7 @@ public class BusForm extends javax.swing.JFrame {
     private String Thexebus;
     private TheBusDAO theBusDAO;
     private String CardID = "";
+    private ImageIcon avatarIcon;
 
     public BusForm() {
         info = new info();
@@ -252,7 +248,7 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         txt_sodu.setText("0");
-        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 50, -1));
+        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 100, -1));
         jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 170, 22));
         jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 140, 170, 22));
         jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, 170, 20));
@@ -571,6 +567,7 @@ public class BusForm extends javax.swing.JFrame {
                 txt_pin.setText("");
                 txt_sodu.setText("");
                 txt_dichvu.setText("");
+                anhthe.setIcon(null);
                 JOptionPane.showMessageDialog(null, "Thẻ đã xóa dữ liệu.");
                 input = false;
             }
@@ -633,7 +630,7 @@ public class BusForm extends javax.swing.JFrame {
                 switch (check_pin(pin)) {
                     case 0:
                         // Mã PIN sai
-                        pinTryCounter--; // Giam so lần nhập còn lại
+                        pinTryCounter--; // Giảm số lần nhập còn lại
                         if (pinTryCounter > 0) {
                             JOptionPane.showMessageDialog(null,
                                     "Mã PIN sai. Bạn còn " + pinTryCounter + " lần nhập.");
@@ -648,6 +645,7 @@ public class BusForm extends javax.swing.JFrame {
                         cardready = true;
                         pinTryCounter = PIN_trylimit; // Reset số lần nhập PIN khi thành công
                         getImage(info.getAvatar());
+                        anhthe.setIcon(avatarIcon);
                         byte[] cmd = {(byte) 0xA0, (byte) 0x11, (byte) 0x00, (byte) 0x00};
                         byte[] data = {0};
                         setCommandAPDU(cmd, (byte) 0, data, (byte) 0); // Hiển thị APDU cmd lên GUI
@@ -887,6 +885,7 @@ public class BusForm extends javax.swing.JFrame {
         try {
             byte[] cmd = {(byte) 0xA0, (byte) 0x13, (byte) 0x01, (byte) 0x00};
             thebus.sendAPDUtoApplet(cmd);
+            
             int sendlen = img.length;
             byte[] cmnd = {(byte) 0xA0, (byte) 0x13, (byte) 0x02, (byte) 0x00};
             byte[] resimg = new byte[sendlen];
@@ -906,9 +905,9 @@ public class BusForm extends javax.swing.JFrame {
             ByteArrayInputStream bais = new ByteArrayInputStream(resimg);
             BufferedImage b;
             b = ImageIO.read(bais);
-            ImageIcon icon = new ImageIcon(b.getScaledInstance(anhthe.getWidth(), anhthe.getHeight(), Image.SCALE_SMOOTH));
-            icon.getImage();
-            anhthe.setIcon(icon);
+            avatarIcon = new ImageIcon(b.getScaledInstance(anhthe.getWidth(), anhthe.getHeight(), Image.SCALE_SMOOTH));
+            //icon.getImage();
+            //anhthe.setIcon(icon);
         } catch (IOException ex) {
             Logger.getLogger(BusForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -926,7 +925,7 @@ public class BusForm extends javax.swing.JFrame {
         short lc = (short) pin.length(); //do dai du lieu gui vao applet
         short le = 1;//du lieu nhan mong doi (Le)
         byte[] cmd = {(byte) 0xA0, (byte) 0x19, (byte) 0x00, (byte) 0x00};
-        byte[] data = pin.getBytes();
+        byte[] data = pin.getBytes(); //chuyen data sang byte
         setCommandAPDU(cmd, (byte) lc, data, (byte) le);
         thebus.sendAPDUtoApplet(cmd, data);
         byte[] dataRes = thebus.resAPDU.getData();
