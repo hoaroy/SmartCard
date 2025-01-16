@@ -16,9 +16,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class thanhtoan extends javax.swing.JFrame {
+
     private theBus thebus;
     String otp;
-    BigInteger modulusPubkey,exponentPubkey ;
+    BigInteger modulusPubkey, exponentPubkey;
     private BusForm parent;
 
     public void setParent(BusForm parent) {
@@ -28,7 +29,7 @@ public class thanhtoan extends javax.swing.JFrame {
     public BusForm getParent() {
         return parent;
     }
-    
+
     public thanhtoan() {
         this.thebus = BusForm.thebus;
         initComponents();
@@ -135,7 +136,7 @@ public class thanhtoan extends javax.swing.JFrame {
     private void btn_ThanhToanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ThanhToanActionPerformed
         //String pin = Arrays.toString(txt_pin.getPassword());
         String sotien = txt_sotien.getText();
-        
+
         // Kiểm tra số tiền hợp lệ
         try {
             int money = Integer.parseInt(sotien);
@@ -149,55 +150,55 @@ public class thanhtoan extends javax.swing.JFrame {
 
             // Hiển thị số tiền đã định dạng
             txt_sotien.setText(formattedMoney);
-            
+
             // Chuyển số tiền thành byte array
             byte[] moneyBytes;
-            if(money <= 255) {
+            if (money <= 255) {
                 moneyBytes = new byte[1];
-                moneyBytes[0] = (byte)money;
-            } else if(money <= 65535) {
+                moneyBytes[0] = (byte) money;
+            } else if (money <= 65535) {
                 moneyBytes = new byte[2];
-                moneyBytes[0] = (byte)(money >> 8);
-                moneyBytes[1] = (byte)(money & 0xFF);
+                moneyBytes[0] = (byte) (money >> 8);
+                moneyBytes[1] = (byte) (money & 0xFF);
             } else {
                 JOptionPane.showMessageDialog(this, "Số tiền quá lớn");
                 return;
             }
 
-            // Tạo chữ ký
+            // thanh toan - tao khoa
             byte[] cmdcreateSig = {(byte) 0xA0, (byte) 0x17, (byte) 0x01, (byte) 0x00};
             //String arraysend = pin.concat(sotien);
             //System.out.println("Data to sign (arraysend): " + arraysend);
             //System.out.println("Data to sign (arraysend bytes): " + Arrays.toString(arraysend.getBytes()));
             thebus.sendAPDUtoApplet(cmdcreateSig, sotien.getBytes());
-            
+
             byte[] aa = thebus.resAPDU.getData();
             if (aa.length == 1 || thebus.resAPDU.getSW1() != 0x90) {
                 JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Lỗi tạo chữ ký số.");
             } else {
                 byte[] input = sotien.getBytes();
-                
+
                 try {
                     boolean verifyCheck = Verify_Signature(input, aa);
-                    
+
                     if (verifyCheck) {
                         // Gửi lệnh cập nhật số dư với số tiền đã được chuyển đổi đúng
                         byte[] cmdverify = {(byte) 0xA0, (byte) 0x17, (byte) 0x02, (byte) 0x00};
                         thebus.sendAPDUtoApplet(cmdverify, moneyBytes);
                         byte[] res = thebus.resAPDU.getData();
-                        
-                        if(res[0] == 0x00) {
+
+                        if (res[0] == 0x00) {
                             JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Đã có lỗi xảy ra");
-                        } else if(res[0] == 0x01) {
+                        } else if (res[0] == 0x01) {
                             // Lấy số dư sau khi nạp thành công
                             byte[] cmdGetSodu = {(byte) 0xA0, (byte) 0x21, (byte) 0x00, (byte) 0x00};
                             thebus.sendAPDUtoApplet(cmdGetSodu);
                             byte[] sodu = thebus.resAPDU.getData();
                             int soduValue = ((sodu[0] & 0xFF) << 8) | (sodu[1] & 0xFF);
-                            
+
                             JOptionPane.showMessageDialog(this, "Giao dịch thành công.\nSố dư hiện tại: " + soduValue + ".000" + " VND");
                             setVisible(false);
-                        } else if(res[0] == 0x02) {
+                        } else if (res[0] == 0x02) {
                             JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Số dư không đủ.");
                         }
                     } else {
@@ -207,7 +208,7 @@ public class thanhtoan extends javax.swing.JFrame {
                     Logger.getLogger(Naptien.class.getName()).log(Level.SEVERE, null, ex);
                     JOptionPane.showMessageDialog(this, "Giao dịch không thành công. Có lỗi xảy ra");
                 }
-                
+
                 //System.out.println("Signature length: " + aa.length);
                 //System.out.println("Signature content: " + Arrays.toString(aa));
             }
@@ -215,27 +216,33 @@ public class thanhtoan extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Số tiền không hợp lệ");
             return;
         }
-        
+
     }//GEN-LAST:event_btn_ThanhToanActionPerformed
-    public boolean Verify_Signature(byte[] input,byte[] signatureToVerify) throws Exception{
+    public boolean Verify_Signature(byte[] input, byte[] signatureToVerify) throws Exception {
         if (signatureToVerify.length != 128) {
             throw new SignatureException("Chu ky khong hop le, do dai chu ky phai la 128 byte.");
         }
-         byte[] getModulusPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x01, (byte) 0x01};
-          thebus.sendAPDUtoApplet(getModulusPubkey);
-          BigInteger resModulusPubkey = new BigInteger(1, thebus.resAPDU.getData());
-          byte[] getExponentPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x02, (byte) 0x01};
-          thebus.sendAPDUtoApplet(getExponentPubkey);
-          BigInteger resExponentPubkey = new BigInteger(1, thebus.resAPDU.getData());
-          
+        byte[] getModulusPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x01, (byte) 0x01};
+        thebus.sendAPDUtoApplet(getModulusPubkey);
+        BigInteger resModulusPubkey = new BigInteger(1, thebus.resAPDU.getData());
+        byte[] getExponentPubkey = {(byte) 0xA0, (byte) 0x22, (byte) 0x02, (byte) 0x01};
+        thebus.sendAPDUtoApplet(getExponentPubkey);
+        BigInteger resExponentPubkey = new BigInteger(1, thebus.resAPDU.getData());
+        
+        // In thông tin khóa
+        System.out.println("RSA Key Components:");
+        System.out.println("Modulus (n) = " + resModulusPubkey.toString());
+        System.out.println("Public Exponent (e) = " + resExponentPubkey.toString());
+        System.out.println("Modulus length: " + resModulusPubkey.bitLength() + " bits");
+
         modulusPubkey = resModulusPubkey;
         exponentPubkey = resExponentPubkey;
-        System.out.println("pubkey: "+modulusPubkey + " / "+exponentPubkey );
-       
+        System.out.println("pubkey: " + modulusPubkey + " / " + exponentPubkey);
+
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(modulusPubkey, exponentPubkey);
         PublicKey key = (RSAPublicKey) keyFactory.generatePublic(pubKeySpec);
-        
+
         Signature signature = Signature.getInstance("MD5withRSA");
         signature.initVerify(key);
         signature.update(input);
@@ -300,4 +307,3 @@ public class thanhtoan extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 }
-

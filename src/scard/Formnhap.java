@@ -17,7 +17,7 @@ public class Formnhap extends javax.swing.JFrame {
     private info info;
     private BusForm busForm; // Tham chiếu đến BusForm
 
-    private static int counter = 100023; // Bộ đếm bắt đầu từ 100023
+    private static int counter = 1023; // Bộ đếm bắt đầu từ 1023
     
     public Formnhap(BusForm busForm) {
         info = new info();
@@ -195,8 +195,12 @@ String pin = Arrays.toString(txt_pin.getPassword());
     } else if (txt_ns.getDate().after(new java.util.Date())){
         JOptionPane.showMessageDialog(this, "Ngày sinh không thể là ngày trong tương lai!");
     }else {
-        // Sinh mã số thẻ theo logic "CT" + số thứ tự
-        String sothe = "CT" + counter;
+        // Lấy giá trị ngày sinh từ JDateChooser và định dạng chỉ lấy ngày và tháng
+        java.text.SimpleDateFormat sdfDayMonth = new java.text.SimpleDateFormat("ddMM");
+        String dayMonth = sdfDayMonth.format(txt_ns.getDate());
+
+        // Sinh mã số thẻ theo logic "CT" + ngày sinh + tháng sinh + counter
+        String sothe = "CT" + dayMonth + counter;
         counter++; // Tăng bộ đếm
         
         String hoten = txt_hoten.getText();

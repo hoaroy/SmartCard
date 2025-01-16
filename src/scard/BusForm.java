@@ -252,7 +252,7 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         txt_sodu.setText("0");
-        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 50, -1));
+        jPanel_info.add(txt_sodu, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, 170, 20));
         jPanel_info.add(txt_sothe, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 170, 22));
         jPanel_info.add(txt_hoten, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 140, 170, 22));
         jPanel_info.add(txt_ngaysinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 180, 170, 20));
@@ -332,7 +332,7 @@ public class BusForm extends javax.swing.JFrame {
         jPanel_info.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 280, -1, -1));
 
         txt_dichvu.setText("0");
-        jPanel_info.add(txt_dichvu, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 340, 50, -1));
+        jPanel_info.add(txt_dichvu, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 340, 120, 20));
 
         Bg_BusForm2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Res/Thexebus.jpg"))); // NOI18N
         jPanel_info.add(Bg_BusForm2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 480, 550));
@@ -865,7 +865,7 @@ public class BusForm extends javax.swing.JFrame {
         byte[] cmd = {(byte) 0xA0, (byte) 0x12, (byte) 0x01, (byte) 0x00};
         thebus.sendAPDUtoApplet(cmd);
         int sendlen = img.length;
-        System.out.println("ảnh gửi:" + img);
+        System.out.println("anh gui:" + img);
         byte[] cmnd = {(byte) 0xA0, (byte) 0x12, (byte) 0x02, (byte) 0x00};
         int pointer = 0;
         byte[] temp = new byte[255];
@@ -903,7 +903,7 @@ public class BusForm extends javax.swing.JFrame {
                     datalen = sendlen;
                 }
             }
-            System.out.println("ảnh res:" + resimg);
+            System.out.println("anh res:" + resimg);
             ByteArrayInputStream bais = new ByteArrayInputStream(resimg);
             BufferedImage b;
             b = ImageIO.read(bais);
